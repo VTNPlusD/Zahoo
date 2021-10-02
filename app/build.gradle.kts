@@ -10,9 +10,10 @@ plugins {
 
 buildscript {
     apply(from = "../ktlint.gradle.kts")
+    apply(from = "../autodimension.gradle.kts")
 }
 
-tasks.withType<PublishToMavenRepository>{
+tasks.withType<PublishToMavenRepository> {
     dependsOn("ktlintCheck")
     dependsOn("ktlintFormat")
 }
@@ -21,7 +22,7 @@ android {
     compileSdkVersion(Versions.compile_sdk_version)
     buildToolsVersion(Versions.build_tools_version)
     defaultConfig {
-        applicationId = "com.vtnd.lus"
+        applicationId = "com.duynn.zahoo"
         minSdkVersion(Versions.min_sdk_version)
         targetSdkVersion(Versions.target_sdk_version)
         versionCode = 1

@@ -53,8 +53,8 @@ object Versions {
     const val coroutines = "1.3.2"
     const val databinding = "2.3.1"
     const val circle_image = "3.1.0"
-    const val preference= "1.1.1"
-    const val legacy_preference= "1.0.0"
+    const val preference = "1.1.1"
+    const val legacy_preference = "1.0.0"
 }
 
 @Suppress("unused")
@@ -204,11 +204,14 @@ object Deps {
     const val anko_core = "org.jetbrains.anko:anko:${Versions.anko}"
     const val anko_design = "org.jetbrains.anko:anko-design:${Versions.anko}"
 
-    const val coroutines_core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
+    const val coroutines_core =
+        "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
     const val coroutines_android =
         "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutines}"
-    const val coroutines_test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines}"
+    const val coroutines_test =
+        "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines}"
     const val circle_image = "de.hdodenhof:circleimageview:${Versions.circle_image}"
     const val preference = "androidx.preference:preference-ktx:${Versions.preference}"
-    const val legacy_preference = "androidx.legacy:legacy-preference-v14:${Versions.legacy_preference}"
+    const val legacy_preference =
+        "androidx.legacy:legacy-preference-v14:${Versions.legacy_preference}"
 }
