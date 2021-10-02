@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+<?xml version="1.0"?><!--
   ~ Copyright 2015 Vincent Brison.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,26 +24,26 @@
     <exclude-pattern>.*/R.java</exclude-pattern>
     <exclude-pattern>.*/gen/.*</exclude-pattern>
 
-    <rule ref="rulesets/java/android.xml"/>
-    <rule ref="rulesets/java/clone.xml"/>
-    <rule ref="rulesets/java/finalizers.xml"/>
+    <rule ref="rulesets/java/android.xml" />
+    <rule ref="rulesets/java/clone.xml" />
+    <rule ref="rulesets/java/finalizers.xml" />
     <rule ref="rulesets/java/imports.xml">
         <!-- Espresso is designed this way !-->
-        <exclude name="TooManyStaticImports"/>
+        <exclude name="TooManyStaticImports" />
     </rule>
-    <rule ref="rulesets/java/logging-java.xml"/>
-    <rule ref="rulesets/java/braces.xml"/>
-    <rule ref="rulesets/java/strings.xml"/>
-    <rule ref="rulesets/java/basic.xml"/>
+    <rule ref="rulesets/java/logging-java.xml" />
+    <rule ref="rulesets/java/braces.xml" />
+    <rule ref="rulesets/java/strings.xml" />
+    <rule ref="rulesets/java/basic.xml" />
     <rule ref="rulesets/java/naming.xml">
-        <exclude name="AbstractNaming"/>
-        <exclude name="LongVariable"/>
-        <exclude name="ShortMethodName"/>
-        <exclude name="ShortVariable"/>
-        <exclude name="VariableNamingConventions"/>
-        <exclude name="MethodNamingConventions"/>
+        <exclude name="AbstractNaming" />
+        <exclude name="LongVariable" />
+        <exclude name="ShortMethodName" />
+        <exclude name="ShortVariable" />
+        <exclude name="VariableNamingConventions" />
+        <exclude name="MethodNamingConventions" />
     </rule>
     <rule ref="rulesets/java/strings.xml">
-        <exclude name="AppendCharacterWithChar"/>
+        <exclude name="AppendCharacterWithChar" />
     </rule>
 </ruleset>
