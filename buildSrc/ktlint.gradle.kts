@@ -1,7 +1,9 @@
 repositories {
     jcenter()
 }
-
+/**
+ * Add gradle tasks incremental for ktlint check
+ */
 val ktlint by configurations.creating
 val ktlintCheck by tasks.creating(JavaExec::class) {
     group = "verification"
@@ -11,7 +13,7 @@ val ktlintCheck by tasks.creating(JavaExec::class) {
     args = listOf("**/src/**/*.kt", "--reporter=html,output=$buildDir/reports/ktlint/ktlint.html")
     args = listOf(
         "src/**/*.kt",
-        "--reporter=html,output=${project.rootDir}/.framgia-ci-reports/ktlint/ktlint.html"
+        "--reporter=html,output=${project.rootDir}/.duy-ci-reports/ktlint/ktlint.html"
     )
 }
 
@@ -23,6 +25,14 @@ val ktlintFormat by tasks.creating(JavaExec::class) {
     args = listOf("-F", "**/*.kt")
 }
 
+val setupKtlintPreCommitHookAndCheck by tasks.creating(Exec::class) {
+    workingDir("${rootProject.projectDir}")
+    commandLine("ktlint", "installGitPreCommitHook")
+}
+
+
+
 dependencies {
     ktlint(Deps.ktlint)
+    ktlint(project(":ktlint-custom-rules"))
 }

@@ -190,6 +190,7 @@ object Deps {
         "androidx.swiperefreshlayout:swiperefreshlayout:${Versions.swiperefreshlayout}"
     const val viewpager2 = "androidx.viewpager2:viewpager2:${Versions.viewpager2}"
     const val ktlint = "com.pinterest:ktlint:${Versions.ktlint}"
+    const val ktlintCore = "com.pinterest.ktlint:ktlint-core:${Versions.ktlint}"
     const val play_services_oss_licenses =
         "com.google.android.gms:play-services-oss-licenses:${Versions.oss_licenses_plugin_version}"
     const val play_services_location =

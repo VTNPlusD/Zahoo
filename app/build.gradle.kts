@@ -9,13 +9,14 @@ plugins {
 }
 
 buildscript {
-    apply(from = "../ktlint.gradle.kts")
     apply(from = "../autodimension.gradle.kts")
+    apply(from = "../buildSrc/ktlint.gradle.kts")
 }
 
-tasks.withType<PublishToMavenRepository> {
-    dependsOn("ktlintCheck")
-    dependsOn("ktlintFormat")
+tasks {
+    getByPath(":app:preBuild").dependsOn("setupKtlintPreCommitHookAndCheck")
+    // getByPath(":app:preBuild").dependsOn("ktlintCheck")
+    getByPath(":app:preBuild").dependsOn("ktlintFormat")
 }
 
 android {
@@ -117,6 +118,15 @@ dependencies {
     implementation(Deps.support_design)
     implementation(Deps.support_constraintLayout)
 
+    // Test
+    implementation(Deps.mockito_inline)
+    implementation(Deps.mockito_kotlin)
+    implementation(Deps.arch_core_testing)
+    implementation(Deps.junit)
+    androidTestImplementation(Deps.atsl_runner)
+    androidTestImplementation(Deps.atsl_ext_junit)
+    androidTestImplementation(Deps.espresso_core)
+
     /*
     // more
     implementation(Deps.support_annotations)
@@ -173,14 +183,6 @@ dependencies {
     implementation(Deps.koin_viewmodel)
     implementation(Deps.koin_ext)
     kapt(Deps.support_databinding)
-
-    //Test
-    implementation(Deps.mockito_inline)
-    implementation(Deps.mockito_kotlin)
-    implementation(Deps.arch_core_testing)
-    implementation(Deps.junit)
-    androidTestImplementation(Deps.atsl_runner)
-    androidTestImplementation(Deps.espresso_core)
 
     //Firebase
     //implementation(Deps.firebase_analytics)
