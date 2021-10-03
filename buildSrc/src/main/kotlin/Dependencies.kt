@@ -36,7 +36,7 @@ object Versions {
     const val work = "2.2.0"
     const val koin = "2.0.1"
     const val firebase_analytics = "17.2.2"
-    const val google_service_plugin = "4.3.3"
+    const val google_service_plugin = "4.3.10"
     const val dexter = "6.0.2"
     const val swiperefreshlayout = "1.1.0-alpha03"
     const val viewpager2 = "1.0.0"

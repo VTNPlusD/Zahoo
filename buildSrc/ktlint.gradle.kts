@@ -25,13 +25,6 @@ val ktlintFormat by tasks.creating(JavaExec::class) {
     args = listOf("-F", "**/*.kt")
 }
 
-val setupKtlintPreCommitHookAndCheck by tasks.creating(Exec::class) {
-    workingDir("${rootProject.projectDir}")
-    commandLine("ktlint", "installGitPreCommitHook")
-}
-
-
-
 dependencies {
     ktlint(Deps.ktlint)
     ktlint(project(":ktlint-custom-rules"))

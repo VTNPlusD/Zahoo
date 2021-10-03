@@ -6,6 +6,7 @@ plugins {
     kotlin(Plugins.kotlinApt)
     id(Plugins.kotlinParcelize)
     id(Plugins.detekt).version(Versions.detekt)
+    id(Plugins.googleServices)
 }
 
 buildscript {
@@ -14,7 +15,6 @@ buildscript {
 }
 
 tasks {
-    getByPath(":app:preBuild").dependsOn("setupKtlintPreCommitHookAndCheck")
     // getByPath(":app:preBuild").dependsOn("ktlintCheck")
     getByPath(":app:preBuild").dependsOn("ktlintFormat")
 }
@@ -55,10 +55,10 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file("../keystores/duynn-keystores")
-            storePassword = ""
-            keyAlias = ""
-            keyPassword = ""
+            storeFile = file("../keystores/android-keystores")
+            storePassword = "Aa@123456"
+            keyAlias = "upload"
+            keyPassword = "Aa@123456"
         }
     }
 
@@ -66,7 +66,6 @@ android {
         getByName("debug") {
             isDebuggable = true
             versionNameSuffix = "-Debug"
-            resValue("string", "app_name", "Lus-Dev")
         }
         getByName("release") {
             isDebuggable = false
@@ -127,6 +126,9 @@ dependencies {
     androidTestImplementation(Deps.atsl_ext_junit)
     androidTestImplementation(Deps.espresso_core)
 
+    // Firebase
+    implementation(Deps.firebase_analytics)
+
     /*
     // more
     implementation(Deps.support_annotations)
@@ -183,9 +185,6 @@ dependencies {
     implementation(Deps.koin_viewmodel)
     implementation(Deps.koin_ext)
     kapt(Deps.support_databinding)
-
-    //Firebase
-    //implementation(Deps.firebase_analytics)
 
     //Circle ImageView
     implementation(Deps.circle_image)
