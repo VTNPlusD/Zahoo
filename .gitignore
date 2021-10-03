@@ -18,6 +18,7 @@
 build/*
 local.properties
 buildSrc/build/
+/.duy-ci-reports/
 
 # gkc files
 gkc_*
