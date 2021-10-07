@@ -4,6 +4,7 @@ plugins {
     id(Plugins.androidApp)
     kotlin(Plugins.kotlinAndroid)
     kotlin(Plugins.kotlinApt)
+    id(Plugins.navigationSafeArgs)
     id(Plugins.kotlinParcelize)
     id(Plugins.detekt).version(Versions.detekt)
     id(Plugins.googleServices)
@@ -15,8 +16,9 @@ buildscript {
 }
 
 tasks {
-    // getByPath(":app:preBuild").dependsOn("ktlintCheck")
-    getByPath(":app:preBuild").dependsOn("ktlintFormat")
+    getByPath(":app:preBuild").dependsOn("ktlintCheck")
+    getByPath(":app:preBuild").dependsOn("detekt")
+    // getByPath(":app:preBuild").dependsOn("ktlintFormat")
 }
 
 android {
@@ -87,6 +89,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
+    kotlinOptions {
+        freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.RequiresOptIn"
+    }
+
     tasks.withType<KotlinCompile> {
         kotlinOptions.jvmTarget = "1.8"
     }
@@ -129,6 +135,63 @@ dependencies {
     // Firebase
     implementation(Deps.firebase_analytics)
 
+    // Timber
+    implementation(Deps.timber)
+
+    //Coroutine
+    implementation(Deps.coroutines_core)
+    implementation(Deps.coroutines_android)
+    implementation(Deps.support_core_ktx)
+    testImplementation(Deps.coroutines_test)
+
+    //Koin
+    implementation(Deps.koin_ext)
+    implementation(Deps.koin_android)
+    implementation(Deps.koin_android)
+    implementation(Deps.koin_viewmodel)
+    implementation(Deps.koin_ext)
+    kapt(Deps.support_databinding)
+
+    //Json
+    implementation(Deps.retrofit_runtime)
+    implementation(Deps.converterMoshi)
+    implementation(Deps.okhttp_logging_interceptor)
+    implementation(Deps.okhttp)
+    implementation(Deps.moshi)
+    implementation(Deps.moshiAdapter)
+    implementation(Deps.moshiKotlin)
+    kapt(Deps.moshiCodegen)
+
+    // preference
+    implementation(Deps.preference)
+
+    //Lifecycler
+    implementation(Deps.lifecycle_viewmodel_ktx)
+    implementation(Deps.lifecycle_extension)
+    implementation(Deps.lifecycle_runtime)
+    implementation(Deps.lifecycle_livedata_ktx)
+    implementation(Deps.lifecycle_java8)
+    kapt(Deps.lifecycle_compiler)
+
+    //Room
+    implementation(Deps.room_runtime)
+    implementation(Deps.room_testing)
+    implementation(Deps.room_ktx)
+    kapt(Deps.room_compiler)
+
+    //Navigation
+    implementation(Deps.navigation_fragment)
+    implementation(Deps.navigation_ui)
+    implementation(Deps.navigation_fragment_ktx)
+    implementation(Deps.navigation_ui_ktx)
+
+    //otp
+    implementation(Deps.otp_view)
+
+    // androidx preference
+    implementation(Deps.preference)
+    implementation(Deps.legacy_preference)
+
     /*
     // more
     implementation(Deps.support_annotations)
@@ -140,51 +203,6 @@ dependencies {
     // gilde
     implementation(Deps.glide_runtime)
     kapt(Deps.glide_compiler)
-
-    // androidx preference
-    implementation(Deps.preference)
-    implementation(Deps.legacy_preference)
-
-    //Json
-    implementation(Deps.retrofit_runtime)
-    implementation(Deps.retrofit_gson)
-    implementation(Deps.okhttp_logging_interceptor)
-    implementation(Deps.moshi)
-    implementation(Deps.moshiKotlin)
-    implementation(Deps.converterMoshi)
-    kapt(Deps.moshiCodegen)
-
-    //Coroutine
-    implementation(Deps.coroutines_core)
-    implementation(Deps.coroutines_android)
-    implementation(Deps.support_core_ktx)
-    testImplementation(Deps.coroutines_test)
-
-    //Lifecycler
-    implementation(Deps.lifecycle_extension)
-    implementation(Deps.lifecycle_livedata_ktx)
-    kapt(Deps.lifecycle_compiler)
-
-
-    //Navigation
-    implementation(Deps.navigation_fragment)
-    implementation(Deps.navigation_ui)
-    implementation(Deps.navigation_fragment_ktx)
-    implementation(Deps.navigation_ui_ktx)
-
-    //Room
-    implementation(Deps.room_runtime)
-    implementation(Deps.room_testing)
-    implementation(Deps.room_ktx)
-    kapt(Deps.room_compiler)
-
-    //Koin
-    implementation(Deps.koin_ext)
-    implementation(Deps.koin_android)
-    implementation(Deps.koin_android)
-    implementation(Deps.koin_viewmodel)
-    implementation(Deps.koin_ext)
-    kapt(Deps.support_databinding)
 
     //Circle ImageView
     implementation(Deps.circle_image)

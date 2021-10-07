@@ -18,23 +18,24 @@ object Versions {
     const val fragment = "1.2.0-rc02"
     const val glide = "4.11.0"
     const val junit = "4.12"
-    const val lifecycle = "2.2.0-alpha03"
+    const val lifecycle = "2.3.0"
+    const val lifecycle_etx = "2.2.0"
     const val mockito = "2.25.0"
     const val powermock = "2.0.2"
     const val mockito_kotlin = "2.2.0"
     const val mockwebserver = "3.8.1"
-    const val navigation = "2.2.0-rc02"
-    const val okhttp_logging_interceptor = "3.9.0"
-    const val retrofit = "2.6.2"
-    const val moshi = "1.9.3"
+    const val navigation = "2.3.5"
+    const val okhttp = "5.0.0-alpha.2"
+    const val retrofit = "2.9.0"
+    const val moshi = "1.11.0"
     const val converter_moshi = "2.4.0"
-    const val room = "2.2.5"
+    const val room = "2.2.6"
     const val room_coroutines = "2.1.0-alpha04"
     const val support = "1.0.0"
     const val constraint_layout = "2.1.1"
     const val material = "1.4.0"
     const val work = "2.2.0"
-    const val koin = "2.0.1"
+    const val koin = "2.2.2"
     const val firebase_analytics = "17.2.2"
     const val google_service_plugin = "4.3.10"
     const val dexter = "6.0.2"
@@ -50,11 +51,13 @@ object Versions {
     const val lottie = "3.3.1"
     const val qr_code = "1.9.8"
     const val anko = "0.10.8"
-    const val coroutines = "1.3.2"
+    const val coroutines = "1.4.2"
     const val databinding = "2.3.1"
     const val circle_image = "3.1.0"
     const val preference = "1.1.1"
     const val legacy_preference = "1.0.0"
+    const val timber = "4.7.1"
+    const val otp_view = "2.1.2"
 }
 
 @Suppress("unused")
@@ -68,7 +71,6 @@ object ClassPaths {
         "com.google.gms:google-services:${Versions.google_service_plugin}"
     const val oss_licenses_plugin =
         "com.google.android.gms:oss-licenses-plugin:${Versions.oss_licenses_plugin}"
-
 }
 
 @Suppress("unused")
@@ -98,7 +100,6 @@ object Deps {
         "androidx.constraintlayout:constraintlayout:${Versions.constraint_layout}"
     const val support_databinding = "com.android.databinding:compiler:${Versions.databinding}"
 
-
     const val support_design = "com.google.android.material:material:${Versions.material}"
     const val support_core_utils = "androidx.legacy:legacy-support-core-utils:${Versions.support}"
     const val support_core_ktx = "androidx.core:core-ktx:${Versions.core_ktx}"
@@ -119,7 +120,8 @@ object Deps {
     const val lifecycle_compiler = "androidx.lifecycle:lifecycle-compiler:${Versions.lifecycle}"
     const val lifecycle_viewmodel_ktx =
         "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycle}"
-    const val lifecycle_extension = "androidx.lifecycle:lifecycle-extensions:${Versions.lifecycle}"
+    const val lifecycle_extension =
+        "androidx.lifecycle:lifecycle-extensions:${Versions.lifecycle_etx}"
     const val lifecycle_livedata_ktx =
         "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.lifecycle}"
 
@@ -130,9 +132,12 @@ object Deps {
     const val retrofit_gson = "com.squareup.retrofit2:converter-gson:${Versions.retrofit}"
     const val retrofit_mock = "com.squareup.retrofit2:retrofit-mock:${Versions.retrofit}"
     const val okhttp_logging_interceptor =
-        "com.squareup.okhttp3:logging-interceptor:${Versions.okhttp_logging_interceptor}"
+        "com.squareup.okhttp3:logging-interceptor:${Versions.okhttp}"
+    const val okhttp =
+        "com.squareup.okhttp3:okhttp:${Versions.okhttp}"
     const val moshi = "com.squareup.moshi:moshi:${Versions.moshi}"
     const val moshiKotlin = "com.squareup.moshi:moshi-kotlin:${Versions.moshi}"
+    const val moshiAdapter = "com.squareup.moshi:moshi-adapters:${Versions.moshi}"
     const val moshiCodegen = "com.squareup.moshi:moshi-kotlin-codegen:${Versions.moshi}"
     const val converterMoshi = "com.squareup.retrofit2:converter-moshi:${Versions.converter_moshi}"
 
@@ -215,4 +220,7 @@ object Deps {
     const val preference = "androidx.preference:preference-ktx:${Versions.preference}"
     const val legacy_preference =
         "androidx.legacy:legacy-preference-v14:${Versions.legacy_preference}"
+    const val timber =
+        "com.jakewharton.timber:timber:${Versions.timber}"
+    const val otp_view = "com.github.mukeshsolanki:android-otpview-pinview:${Versions.otp_view}"
 }

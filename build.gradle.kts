@@ -10,7 +10,7 @@ buildscript {
     dependencies {
         classpath(ClassPaths.android_gradle_plugin)
         classpath(ClassPaths.kotlin_gradle_plugin)
-//        classpath(ClassPaths.navigation_safeargs_plugin)
+       classpath(ClassPaths.navigation_safeargs_plugin)
 //        classpath(ClassPaths.oss_licenses_plugin)
        classpath(ClassPaths.google_service_plugin)
 
