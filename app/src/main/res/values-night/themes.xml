@@ -18,6 +18,9 @@
         <item name="colorControlActivated">@color/blue_500</item>
         <item name="colorControlHighlight">@color/blue_500</item>
         <item name="otpViewStyle">@style/OtpWidget.OtpView</item>
+        <!-- font -->
+        <item name="fontFamily">@font/segoe_ui_regular</item>
+        <item name="android:fontFamily">@font/segoe_ui_regular</item>
     </style>
 
     <style name="SplashTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">

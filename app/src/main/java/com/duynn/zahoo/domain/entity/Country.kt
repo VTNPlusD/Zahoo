@@ -13,5 +13,5 @@ data class Country(
     val code: String
 ) : Parcelable, BaseEntity() {
 
-    override fun toString() = "$name ($dialCode)"
+    override fun toString() = "($dialCode) $name"
 }

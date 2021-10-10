@@ -1,6 +1,8 @@
 package com.duynn.zahoo.presentation.ui.auth.login
 
 import androidx.lifecycle.viewModelScope
+import com.duynn.zahoo.domain.usecase.GetTokenUseCase
+import com.duynn.zahoo.domain.usecase.SetTokenUseCase
 import com.duynn.zahoo.domain.usecase.UserGetCountriesUseCase
 import com.duynn.zahoo.presentation.base.BaseViewModel
 import com.duynn.zahoo.presentation.mapper.CountryMapper
@@ -11,7 +13,7 @@ import com.duynn.zahoo.utils.types.ValidateErrorType.validatePhone
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
-import timber.log.Timber
+import kotlinx.coroutines.launch
 
 /**
  *Created by duynn100198 on 10/04/21.
@@ -20,11 +22,23 @@ import timber.log.Timber
 @ExperimentalCoroutinesApi
 class LoginViewModel(
     private val userGetCountriesUseCase: UserGetCountriesUseCase,
-    private val mapper: CountryMapper
-) :
-    BaseViewModel<ViewIntent, ViewState, SingleEvent, PartialStateChange>(
-        ViewState.initial()
-    ) {
+    private val mapper: CountryMapper,
+    private val setTokenUseCase: SetTokenUseCase,
+    getTokenUseCase: GetTokenUseCase
+) : BaseViewModel<ViewIntent, ViewState, SingleEvent, PartialStateChange>(ViewState.initial()) {
+    private val _tokenEvent = MutableSharedFlow<Boolean>()
+    val tokenEvent get() = _tokenEvent.asSharedFlow()
+
+    init {
+        viewModelScope.launch {
+            val tokenEv = getTokenUseCase.invoke().fold(
+                { false },
+                { !it.isNullOrBlank() }
+            )
+            _tokenEvent.emit(tokenEv)
+        }
+    }
+
     override fun Flow<PartialStateChange>.sendSingleEvent(): Flow<PartialStateChange> {
         return onEach { change ->
             val event = when (change) {
@@ -71,9 +85,11 @@ class LoginViewModel(
         val loginFormFlow =
             combine(phoneErrors, countryErrors) { phone, country ->
                 val errors = phone.first + country.first
-                if (errors.isEmpty()) Either.Right(
-                    phone.second + country.second
-                ) else Either.Left(errors)
+                if (errors.isEmpty()) {
+                    val phoneTrim = phone.second?.replace("+", "")
+                    val phoneNumber = "${country.second?.dialCode ?: ""}$phoneTrim"
+                    Either.Right(phoneNumber)
+                } else Either.Left(errors)
             }.shareIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed()
@@ -82,14 +98,12 @@ class LoginViewModel(
         val loginChanges = filterIsInstance<ViewIntent.Submit>()
             .withLatestFrom(loginFormFlow) { _, loginForm -> loginForm }
             .mapNotNull { it.rightOrNull() }
-            .flatMapFirst { str ->
+            .flatMapFirst { phoneNumber ->
                 flow {
-                    Timber.d("loginChanges=$str-user.password")
-                    emit(PartialStateChange.Login.LoginSuccess as PartialStateChange.Login)
-                    // loginUseCase.invoke(otp).fold(
-                    //     ifRight = { emit(PartialStateChange.Otp.OtpSuccess) },
-                    //     ifLeft = { emit(PartialStateChange.Otp.OtpFailure(it)) }
-                    // )
+                    setTokenUseCase.invoke(phoneNumber).fold(
+                        ifRight = { emit(PartialStateChange.Login.LoginSuccess) },
+                        ifLeft = { emit(PartialStateChange.Login.LoginFailure(it)) }
+                    )
                 }.onStart {
                     emit(PartialStateChange.Login.Loading)
                 }

@@ -42,7 +42,7 @@ class SharedPrefApiImpl(private val context: Context, private val moshi: Moshi) 
             is Set<*>? -> sharedPreferences.delegate(
                 SharedPreferences::getStringSet,
                 SharedPreferences.Editor::putStringSet,
-                defaultValue?.filterIsInstanceTo(mutableSetOf<String>()),
+                defaultValue?.filterIsInstanceTo(mutableSetOf()),
                 key,
                 commit
             )

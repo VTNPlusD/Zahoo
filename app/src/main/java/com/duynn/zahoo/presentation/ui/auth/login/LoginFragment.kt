@@ -18,6 +18,7 @@ import com.duynn.zahoo.utils.extension.clicks
 import com.duynn.zahoo.utils.extension.firstChange
 import com.duynn.zahoo.utils.extension.getMessage
 import com.duynn.zahoo.utils.extension.itemSelections
+import com.duynn.zahoo.utils.extension.observe
 import com.duynn.zahoo.utils.extension.snack
 import com.duynn.zahoo.utils.extension.textChanges
 import com.duynn.zahoo.utils.extension.viewBinding
@@ -25,7 +26,6 @@ import com.duynn.zahoo.utils.types.ValidateErrorType
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
@@ -44,8 +44,14 @@ class LoginFragment :
     override val viewBinding by viewBinding(FragmentLoginBinding::bind)
 
     override fun setUpView(view: View, savedInstanceState: Bundle?): Unit = with(viewBinding) {
-        val state = viewModel.viewState.value
-        phoneNumberEdit.editText?.setText(state.phone)
+        phoneNumberEdit.setText("")
+        bindVM()
+    }
+
+    private fun bindVM() {
+        viewModel.tokenEvent.observe(this) {
+            if (it) findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToOtpFragment())
+        }
     }
 
     override fun handleSingleEvent(event: SingleEvent) {
@@ -62,6 +68,8 @@ class LoginFragment :
                     R.layout.item_country_spinner,
                     event.countries
                 )
+                viewBinding.countryCodeSpinner.setSelection(viewModel.viewState.value.countries.indexOf(
+                    viewModel.viewState.value.country))
             }
         }
     }
@@ -72,8 +80,8 @@ class LoginFragment :
                 getString(R.string.validation_req_phone_valid)
             } else null
 
-        if (viewState.phoneChanged && viewBinding.phoneNumberEdit.error != phoneErrorMessage) {
-            viewBinding.phoneNumberEdit.error = phoneErrorMessage
+        if (viewState.phoneChanged && viewBinding.errorText.text != phoneErrorMessage) {
+            viewBinding.errorText.text = phoneErrorMessage
         }
 
         TransitionManager.beginDelayedTransition(
@@ -90,22 +98,18 @@ class LoginFragment :
     override fun viewIntents(): Flow<ViewIntent> = viewBinding.run {
         merge(
             phoneNumberEdit
-                .editText
-                ?.textChanges()
-                ?.map { ViewIntent.PhoneChanged(it?.toString()) } ?: emptyFlow(),
+                .textChanges()
+                .map { ViewIntent.PhoneChanged(it?.toString()) },
             submitButton
                 .clicks()
                 .map { ViewIntent.Submit },
             phoneNumberEdit
-                .editText
-                ?.firstChange()
-                ?.map { ViewIntent.PhoneChangedFirstTime } ?: emptyFlow(),
+                .firstChange()
+                .map { ViewIntent.PhoneChangedFirstTime },
             countryCodeSpinner
                 .itemSelections<Country>()
                 .map { ViewIntent.CountryChanged(it) },
-            flow {
-                emit(ViewIntent.GetCountries)
-            }.take(1)
+            flow { emit(ViewIntent.GetCountries) }.take(1)
         )
     }
 }

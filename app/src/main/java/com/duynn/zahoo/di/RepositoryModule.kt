@@ -10,5 +10,12 @@ import org.koin.dsl.module
  */
 @OptIn(KoinApiExtension::class)
 val repositoryModule = module {
-    single<UserRepository> { UserRepositoryImpl(get(), get(), get()) }
+    single<UserRepository> {
+        UserRepositoryImpl(
+            userLocalSource = get(),
+            userRemoteSource = get(),
+            mapper = get(),
+            application = get()
+        )
+    }
 }

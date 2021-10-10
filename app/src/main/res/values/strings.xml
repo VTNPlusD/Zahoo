@@ -122,4 +122,12 @@ Neque aliquam vestibulum morbi blandit. Molestie nunc non blandit massa enim nec
     <string name="selected_count">%d selected</string>
     <string name="group_participants_error">Unable to load all group members. Please refresh your users then check again.</string>
     <string name="hint_otp">_ _ _ _ _ _</string>
+    <string name="continue_str">Continue</string>
+    <string name="enter_your_code">Enter your code</string>
+    <string name="please_enter_the_6_digit_verification_code_sent_to">Please enter the 6 digit verification code sent to</string>
+    <string name="dial_code">Dial code</string>
+    <string name="country_code">Country Code</string>
+    <string name="you_will_receive_a_6_digit_code_for_phone_number_verification">You will receive a 6 digit code for phone number verification</string>
+    <string name="enter_your_phone_number">Enter your phone number</string>
+    <string name="hint_phone_number">090*********</string>
 </resources>

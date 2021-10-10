@@ -3,7 +3,6 @@ package com.duynn.zahoo.di
 import com.duynn.zahoo.presentation.ui.auth.login.LoginViewModel
 import com.duynn.zahoo.presentation.ui.auth.otp.OtpViewModel
 import com.duynn.zahoo.presentation.ui.main.MainViewModel
-import com.duynn.zahoo.presentation.ui.main.profile.ProfileViewModel
 import com.duynn.zahoo.presentation.ui.splash.SplashViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -23,19 +22,26 @@ val viewModelModule = module {
     viewModel {
         LoginViewModel(
             userGetCountriesUseCase = get(),
-            mapper = get()
+            mapper = get(),
+            getTokenUseCase = get(),
+            setTokenUseCase = get()
         )
     }
     viewModel {
-        OtpViewModel()
+        OtpViewModel(
+            tokenObservableUseCase = get(),
+            clearAuthUseCase = get(),
+            verifyPhoneNumberUseCase = get(),
+            getTokenUseCase = get(),
+            phoneAuthMapper = get(),
+            userLoginUseCase = get(),
+            signInWithPhoneAuthCredentialUseCase = get()
+        )
     }
     viewModel {
         SplashViewModel(checkAuthUseCase = get())
     }
     viewModel {
         MainViewModel(userObservableUseCase = get())
-    }
-    viewModel {
-        ProfileViewModel(userLogoutUseCase = get())
     }
 }

@@ -7,10 +7,91 @@ import android.os.Bundle
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentActivity
+import com.duynn.zahoo.utils.extension.checkMainThread
+import com.duynn.zahoo.utils.extension.safeOffer
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.callbackFlow
+import timber.log.Timber
 
 /**
  *Created by duynn100198 on 10/04/21.
  */
+/**
+ * Show alert dialog fragment
+ * @return a [Maybe] that emits [Unit] when pressing OK button,
+ * otherwise return an empty [Maybe]
+ */
+
+@ExperimentalCoroutinesApi
+fun FragmentActivity.showAlertDialogConfirm(
+    negativeText: String = "Cancel",
+    positiveText: String = "OK",
+    init: AlertDialogFragment.Builder.() -> Unit
+) = callbackFlow<Unit> {
+    checkMainThread()
+    showAlertDialog {
+        init()
+        onCancel { close() }
+        negativeAction(negativeText) { _, _ -> close() }
+        positiveAction(positiveText) { _, _ ->
+            safeOffer(Unit)
+            close()
+        }
+    }
+    awaitClose { dismissAlertDialog() }
+}
+
+@ExperimentalCoroutinesApi
+fun FragmentActivity.showAlertDialogInfo(
+    neutralAction: String = "OK",
+    init: AlertDialogFragment.Builder.() -> Unit
+) = callbackFlow<Unit> {
+    checkMainThread()
+    showAlertDialog {
+        init()
+        onCancel { close() }
+        positiveAction(neutralAction) { _, _ ->
+            safeOffer(Unit)
+            close()
+        }
+    }
+    awaitClose { dismissAlertDialog() }
+}
+
+/**
+ * Show alert dialog
+ */
+fun FragmentActivity.showAlertDialog(init: AlertDialogFragment.Builder.() -> Unit): AlertDialogFragment {
+    val ft = supportFragmentManager.beginTransaction().apply {
+        supportFragmentManager
+            .findFragmentByTag(AlertDialogFragment::class.java.simpleName)
+            ?.let(::remove)
+        addToBackStack(null)
+    }
+
+    return AlertDialogFragment.Builder()
+        .apply(init)
+        .build()
+        .apply { show(ft, AlertDialogFragment::class.java.simpleName) }
+}
+
+/**
+ * Dismiss alert dialog
+ */
+fun FragmentActivity.dismissAlertDialog() {
+    try {
+        val dialogFragment =
+            supportFragmentManager.findFragmentByTag(AlertDialogFragment::class.java.simpleName) as? AlertDialogFragment
+        dialogFragment?.cleanUp()
+        dialogFragment?.dismissAllowingStateLoss()
+        Timber.d("dismissAlertDialog")
+    } catch (e: Exception) {
+        Timber.d("dismissAlertDialog $e")
+    }
+}
+
 class AlertDialogFragment : DialogFragment() {
     var builder: Builder? = null
         private set
@@ -53,6 +134,10 @@ class AlertDialogFragment : DialogFragment() {
                 }
             }
             .create()
+    }
+
+    fun cleanUp() {
+        builder = null
     }
 
     companion object {

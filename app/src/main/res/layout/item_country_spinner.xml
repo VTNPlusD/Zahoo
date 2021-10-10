@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<TextView xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="@dimen/dp_4"
-    android:textColor="?attr/colorOnPrimary"
+    android:maxLines="1"
+    android:textColor="@color/grey_700"
+    android:ellipsize="end"
+    app:fontFamily="@font/segoe_ui_bold"
     android:textSize="@dimen/sp_12" />

@@ -113,7 +113,7 @@ fun <A, B, R> Flow<A>.withLatestFrom(other: Flow<B>, transform: suspend (A, B) -
     }
 }
 
-inline fun <T : Any> Flow<T>.observe(
+inline fun <reified T> Flow<T>.observe(
     owner: LifecycleOwner,
     crossinline observer: (T) -> Unit
 ) = onEach { observer(it) }

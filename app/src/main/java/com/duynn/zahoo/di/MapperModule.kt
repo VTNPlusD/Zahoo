@@ -1,6 +1,7 @@
 package com.duynn.zahoo.di
 
 import com.duynn.zahoo.presentation.mapper.CountryMapper
+import com.duynn.zahoo.presentation.mapper.PhoneAuthMapper
 import com.duynn.zahoo.presentation.mapper.UserMapper
 import org.koin.dsl.module
 
@@ -10,4 +11,5 @@ import org.koin.dsl.module
 val mapperModule = module {
     factory { UserMapper() }
     factory { CountryMapper() }
+    factory { PhoneAuthMapper() }
 }

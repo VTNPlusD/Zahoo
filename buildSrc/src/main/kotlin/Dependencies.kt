@@ -36,17 +36,24 @@ object Versions {
     const val material = "1.4.0"
     const val work = "2.2.0"
     const val koin = "2.2.2"
-    const val firebase_analytics = "17.2.2"
     const val google_service_plugin = "4.3.10"
     const val dexter = "6.0.2"
-    const val swiperefreshlayout = "1.1.0-alpha03"
+    const val swiperefreshlayout = "1.1.0"
     const val viewpager2 = "1.0.0"
     const val ktlint = "0.36.0"
     const val detekt = "1.3.0"
     const val oss_licenses_plugin = "0.10.0"
+    const val firebase_crashlytics_plugin = "2.7.1"
     const val oss_licenses_plugin_version = "17.0.0"
     const val play_services_location = "17.0.0"
-    const val firebase_messaging = "20.1.0"
+    const val play_services_places = "17.0.0"
+    const val play_services_ads= "20.4.0"
+    const val firebase_auth = "21.0.1"
+    const val firebase_storge = "20.0.0"
+    const val firebase_database = "20.0.2"
+    const val firebase_messaging = "22.0.0"
+    const val firebase_analytics = "19.0.2"
+    const val firebase_crashlytics = "18.2.3"
     const val mp_android_chart = "v3.1.0"
     const val lottie = "3.3.1"
     const val qr_code = "1.9.8"
@@ -71,6 +78,8 @@ object ClassPaths {
         "com.google.gms:google-services:${Versions.google_service_plugin}"
     const val oss_licenses_plugin =
         "com.google.android.gms:oss-licenses-plugin:${Versions.oss_licenses_plugin}"
+    const val firebase_crashlytics_plugin =
+        "com.google.firebase:firebase-crashlytics-gradle:${Versions.firebase_crashlytics_plugin}"
 }
 
 @Suppress("unused")
@@ -85,6 +94,7 @@ object Plugins {
     const val androidLib = "com.android.library"
     const val navigationSafeArgs = "androidx.navigation.safeargs.kotlin"
     const val googleServices = "com.google.gms.google-services"
+    const val firebaseCrashlytics = "com.google.firebase.crashlytics"
     const val ossLicenses = "com.google.android.gms.oss-licenses-plugin"
     const val detekt = "io.gitlab.arturbosch.detekt"
     const val fabric = "io.fabric"
@@ -187,9 +197,18 @@ object Deps {
     const val koin_android = "org.koin:koin-androidx-scope:${Versions.koin}"
     const val koin_viewmodel = "org.koin:koin-androidx-viewmodel:${Versions.koin}"
     const val koin_ext = "org.koin:koin-androidx-ext:${Versions.koin}"
-
+    const val firebase_database =
+        "com.google.firebase:firebase-database-ktx:${Versions.firebase_database}"
+    const val firebase_storage =
+        "com.google.firebase:firebase-storage-ktx:${Versions.firebase_storge}"
+    const val firebase_auth =
+        "com.google.firebase:firebase-auth-ktx:${Versions.firebase_auth}"
     const val firebase_analytics =
-        "com.google.firebase:firebase-analytics:${Versions.firebase_analytics}"
+        "com.google.firebase:firebase-analytics-ktx:${Versions.firebase_analytics}"
+    const val firebase_crashlytics =
+        "com.google.firebase:firebase-crashlytics-ktx:${Versions.firebase_crashlytics}"
+    const val firebase_messaging =
+        "com.google.firebase:firebase-messaging-ktx:${Versions.firebase_messaging}"
     const val dexter = "com.karumi:dexter:${Versions.dexter}"
     const val swiperefreshlayout =
         "androidx.swiperefreshlayout:swiperefreshlayout:${Versions.swiperefreshlayout}"
@@ -200,8 +219,10 @@ object Deps {
         "com.google.android.gms:play-services-oss-licenses:${Versions.oss_licenses_plugin_version}"
     const val play_services_location =
         "com.google.android.gms:play-services-location:${Versions.play_services_location}"
-    const val firebase_messaging =
-        "com.google.firebase:firebase-messaging:${Versions.firebase_messaging}"
+    const val play_services_places =
+        "com.google.android.gms:play-services-places:${Versions.play_services_places}"
+    const val play_services_ads =
+        "com.google.android.gms:play-services-ads:${Versions.play_services_ads}"
     const val youtube_player_api_path = "libs/YouTubeAndroidPlayerApi.jar"
     const val mp_android_chart = "com.github.PhilJay:MPAndroidChart:${Versions.mp_android_chart}"
     const val lottie = "com.airbnb.android:lottie:${Versions.lottie}"
@@ -216,6 +237,8 @@ object Deps {
         "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutines}"
     const val coroutines_test =
         "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines}"
+    const val coroutines_play_services=
+        "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:${Versions.coroutines}"
     const val circle_image = "de.hdodenhof:circleimageview:${Versions.circle_image}"
     const val preference = "androidx.preference:preference-ktx:${Versions.preference}"
     const val legacy_preference =
