@@ -7,7 +7,6 @@ import com.duynn.zahoo.domain.usecase.SetTokenUseCase
 import com.duynn.zahoo.domain.usecase.SignInWithPhoneAuthCredentialUseCase
 import com.duynn.zahoo.domain.usecase.TokenObservableUseCase
 import com.duynn.zahoo.domain.usecase.UserGetCountriesUseCase
-import com.duynn.zahoo.domain.usecase.UserLoginUseCase
 import com.duynn.zahoo.domain.usecase.UserObservableUseCase
 import com.duynn.zahoo.domain.usecase.VerifyPhoneNumberUseCase
 import org.koin.dsl.module
@@ -16,7 +15,6 @@ import org.koin.dsl.module
  *Created by duynn100198 on 10/04/21.
  */
 val useCaseModule = module {
-    factory { UserLoginUseCase(userRepository = get()) }
     factory { CheckAuthUseCase(userRepository = get()) }
     factory { UserObservableUseCase(userRepository = get()) }
     factory { UserGetCountriesUseCase(userRepository = get()) }

@@ -14,6 +14,7 @@ object Versions {
     const val androidx_test = "1.2.0"
     const val androidx_test_ext = "1.1.2"
     const val core_ktx = "1.5.0"
+    const val browser = "1.3.0"
     const val espresso = "3.2.0"
     const val fragment = "1.2.0-rc02"
     const val glide = "4.11.0"
@@ -116,6 +117,7 @@ object Deps {
     const val support_fragment_runtime = "androidx.fragment:fragment:${Versions.fragment}"
     const val support_fragment_runtime_ktx = "androidx.fragment:fragment-ktx:${Versions.fragment}"
     const val support_fragment_testing = "androidx.fragment:fragment-testing:${Versions.fragment}"
+    const val support_browser = "androidx.browser:browser:${Versions.browser}"
 
     const val security_crypto = "androidx.security:security-crypto:${Versions.security_crypto}"
 

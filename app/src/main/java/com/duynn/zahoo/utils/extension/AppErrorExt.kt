@@ -15,5 +15,6 @@ fun AppError.getMessage(): String {
         is AppError.LocationError.LocationSettingsDisabled -> "Location settings disabled. Please enable to continue!"
         AppError.LocationError.GeocoderEmptyResult -> "Cannot get address from coordinates"
         AppError.WrongRole -> "This app only supports doctor roles"
+        AppError.WrongVerification -> "Verification failed! Please try resend code or change number!"
     }
 }
