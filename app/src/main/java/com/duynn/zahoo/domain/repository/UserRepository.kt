@@ -17,12 +17,11 @@ interface UserRepository {
     suspend fun saveAuthToken(token: String): DomainResult<Any>
     suspend fun clearAuth(): DomainResult<Any>
     fun tokenObservable(): Flow<DomainResult<Option<String>>>
-    suspend fun login(): DomainResult<Unit>
 
     suspend fun getCountries(): DomainResult<List<CountryData>>
     fun userObservable(): Flow<DomainResult<Option<UserData>>>
     suspend fun checkAuth(): DomainResult<Boolean>
     suspend fun checkAuthInternal()
     suspend fun verifyPhoneNumber(activity: Activity): DomainResult<PhoneAuthData>
-    suspend fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential): DomainResult<Unit?>
+    suspend fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential): DomainResult<Unit>
 }

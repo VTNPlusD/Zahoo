@@ -34,7 +34,6 @@ val viewModelModule = module {
             verifyPhoneNumberUseCase = get(),
             getTokenUseCase = get(),
             phoneAuthMapper = get(),
-            userLoginUseCase = get(),
             signInWithPhoneAuthCredentialUseCase = get()
         )
     }

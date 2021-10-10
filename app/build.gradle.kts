@@ -124,6 +124,7 @@ dependencies {
     implementation(Deps.support_app_compat)
     implementation(Deps.support_design)
     implementation(Deps.support_constraintLayout)
+    implementation(Deps.support_browser)
 
     // Test
     implementation(Deps.mockito_inline)

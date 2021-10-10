@@ -90,7 +90,7 @@ class UserRepositoryImpl(
             .buffer(1)
     }
 
-    override suspend fun login(): DomainResult<Unit> {
+    private suspend fun login(): DomainResult<Unit> {
         return catch {
             withContext(dispatchersProvider.dispatcher()) {
                 userLocalSource.token()?.let {
@@ -158,7 +158,6 @@ class UserRepositoryImpl(
                     is PhoneAuthData.CodeSent -> phoneAuth
                     is PhoneAuthData.VerificationCompleted -> {
                         userRemoteSource.signInWithPhoneAuthCredential(phoneAuth.credential)
-                        login().getOrThrow()
                         phoneAuth
                     }
                 }
@@ -167,10 +166,11 @@ class UserRepositoryImpl(
 
     override suspend fun signInWithPhoneAuthCredential(
         credential: PhoneAuthCredential
-    ): DomainResult<Unit?> =
+    ): DomainResult<Unit> =
         catch {
             withContext((dispatchersProvider.dispatcher())) {
                 userRemoteSource.signInWithPhoneAuthCredential(credential)
+                login().getOrThrow()
             }
         }.mapLeft(mapper::map)
 

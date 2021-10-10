@@ -68,6 +68,7 @@ interface OtpContract {
             data class OtpFailure(val throwable: AppError) : Otp()
             data class PhoneNumberSuccess(val phone: String?) : Otp()
             data class OnVerificationCompleted(val phoneAuthCredential: PhoneAuthCredential) : Otp()
+            data class OnVerificationFailed(val throwable: AppError) : Otp()
             data class OnCodeSent(
                 val verificationId: String,
                 val forceResendingToken: PhoneAuthProvider.ForceResendingToken
@@ -90,6 +91,7 @@ interface OtpContract {
                         isLoading = false,
                         phoneAuthCredential = phoneAuthCredential
                     )
+                    is OnVerificationFailed -> viewState.copy(isLoading = false)
                 }
             }
         }
@@ -118,6 +120,7 @@ interface OtpContract {
     sealed class SingleEvent : MVISingleEvent {
         object OtpSuccess : SingleEvent()
         data class OtpFailure(val throwable: AppError) : SingleEvent()
+        data class OnVerificationFailed(val throwable: AppError) : SingleEvent()
         object OtpStartCountdown : SingleEvent()
     }
 }

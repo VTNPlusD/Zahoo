@@ -6,6 +6,8 @@ package com.duynn.zahoo.data.error
 sealed class AppError(cause: Throwable?) : Throwable(cause) {
     object WrongRole : AppError(null)
 
+    object WrongVerification : AppError(null)
+
     sealed class Remote(cause: Throwable?) : AppError(cause) {
         data class NetworkError(override val cause: Throwable) : Remote(cause)
 

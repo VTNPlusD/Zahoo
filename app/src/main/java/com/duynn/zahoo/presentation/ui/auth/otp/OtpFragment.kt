@@ -85,12 +85,18 @@ class OtpFragment :
             }
             is SingleEvent.OtpFailure -> {
                 viewBinding.codeOtpView.setText("")
-                Timber.d("Failure: ${event.throwable.getMessage()}")
-                viewBinding.root.snack("Failure: ${event.throwable.getMessage()}").show()
+                Timber.d(event.throwable.getMessage())
+                viewBinding.root.snack(event.throwable.getMessage()).show()
                 cancelCountdown()
             }
             is SingleEvent.OtpStartCountdown -> {
                 startCountdown()
+            }
+            is SingleEvent.OnVerificationFailed -> {
+                viewBinding.codeOtpView.setText("")
+                onHideSoftKeyBoard()
+                Timber.d(event.throwable.getMessage())
+                viewBinding.root.snack(event.throwable.getMessage()).show()
             }
         }
     }
