@@ -3,6 +3,7 @@
 buildscript {
     repositories {
         google()
+        mavenLocal()
         jcenter()
         maven(url = "https://maven.fabric.io/public")
     }
@@ -10,9 +11,10 @@ buildscript {
     dependencies {
         classpath(ClassPaths.android_gradle_plugin)
         classpath(ClassPaths.kotlin_gradle_plugin)
-       classpath(ClassPaths.navigation_safeargs_plugin)
+        classpath(ClassPaths.navigation_safeargs_plugin)
 //        classpath(ClassPaths.oss_licenses_plugin)
        classpath(ClassPaths.google_service_plugin)
+       classpath(ClassPaths.firebase_crashlytics_plugin)
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -22,6 +24,7 @@ buildscript {
 allprojects {
     repositories {
         google()
+        mavenLocal()
         jcenter()
         maven(url = "https://www.jitpack.io")
     }

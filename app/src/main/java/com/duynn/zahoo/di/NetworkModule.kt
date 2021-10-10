@@ -5,7 +5,6 @@ import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import com.duynn.zahoo.BuildConfig
 import com.duynn.zahoo.data.error.ErrorMapper
-import com.duynn.zahoo.data.model.UserDataJsonAdapter
 import com.duynn.zahoo.data.repository.source.local.api.SharedPrefApi
 import com.duynn.zahoo.data.repository.source.remote.api.ApiService
 import com.duynn.zahoo.data.repository.source.remote.middleware.InterceptorImpl
@@ -48,10 +47,6 @@ private fun provideSharedPreferences(context: Context): SharedPreferences {
     return PreferenceManager.getDefaultSharedPreferences(context)
 }
 
-private fun provideUserLocalJsonAdapter(moshi: Moshi): UserDataJsonAdapter {
-    return UserDataJsonAdapter(moshi)
-}
-
 private fun provideAuthInterceptor(sharedPrefApi: SharedPrefApi): InterceptorImpl {
     return InterceptorImpl(sharedPrefApi)
 }
@@ -88,7 +83,6 @@ val networkModule = module {
     single { provideMoshi() }
     factory { provideAuthInterceptor(get()) }
     factory { provideErrorResponseJsonAdapter(get()) }
-    factory { provideUserLocalJsonAdapter(get()) }
     single { provideErrorMapper(get()) }
     single { provideSharedPreferences(androidApplication()) }
     single { provideRetrofit(get(), get(), get(named(Constants.KEY_BASE_URL))) }

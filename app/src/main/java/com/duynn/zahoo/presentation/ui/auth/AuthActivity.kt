@@ -21,15 +21,19 @@ class AuthActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        supportActionBar?.hide()
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.auth_nav_host_fragment) as NavHostFragment
+        // val inflater = navHostFragment.navController.navInflater
+        // val graph = inflater.inflate(R.navigation.auth)
+        // graph.startDestination = R.id.otpFragment
         val navController = navHostFragment.navController
+        // navController.graph = graph
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(
             navController,
             appBarConfiguration
         )
-        supportActionBar?.hide()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.insetsController?.hide(WindowInsets.Type.statusBars())
         } else {

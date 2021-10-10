@@ -1,18 +1,32 @@
 package com.duynn.zahoo.presentation.ui.auth.otp
 
 import androidx.lifecycle.viewModelScope
+import com.duynn.zahoo.domain.entity.PhoneAuth
+import com.duynn.zahoo.domain.usecase.ClearAuthUseCase
+import com.duynn.zahoo.domain.usecase.GetTokenUseCase
+import com.duynn.zahoo.domain.usecase.SignInWithPhoneAuthCredentialUseCase
+import com.duynn.zahoo.domain.usecase.TokenObservableUseCase
+import com.duynn.zahoo.domain.usecase.UserLoginUseCase
+import com.duynn.zahoo.domain.usecase.VerifyPhoneNumberUseCase
 import com.duynn.zahoo.presentation.base.BaseViewModel
+import com.duynn.zahoo.presentation.mapper.PhoneAuthMapper
 import com.duynn.zahoo.presentation.ui.auth.otp.OtpContract.*
 import com.duynn.zahoo.utils.extension.Either
 import com.duynn.zahoo.utils.extension.flatMapFirst
+import com.duynn.zahoo.utils.extension.fold
+import com.duynn.zahoo.utils.extension.getOrNull
 import com.duynn.zahoo.utils.extension.leftOrNull
 import com.duynn.zahoo.utils.extension.rightOrNull
+import com.duynn.zahoo.utils.extension.toOption
 import com.duynn.zahoo.utils.extension.withLatestFrom
 import com.duynn.zahoo.utils.types.ValidateErrorType
+import com.google.firebase.auth.PhoneAuthProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -21,24 +35,42 @@ import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
-import timber.log.Timber
+import kotlinx.coroutines.launch
 
 /**
  * Created by duynn100198 on 10/5/21.
  */
 @FlowPreview
 @ExperimentalCoroutinesApi
-class OtpViewModel :
-    BaseViewModel<ViewIntent, ViewState, SingleEvent, PartialStateChange>(ViewState.initial()) {
+class OtpViewModel(
+    tokenObservableUseCase: TokenObservableUseCase,
+    private val clearAuthUseCase: ClearAuthUseCase,
+    private val verifyPhoneNumberUseCase: VerifyPhoneNumberUseCase,
+    private val getTokenUseCase: GetTokenUseCase,
+    private val signInWithPhoneAuthCredentialUseCase: SignInWithPhoneAuthCredentialUseCase,
+    private val userLoginUseCase: UserLoginUseCase,
+    private val phoneAuthMapper: PhoneAuthMapper
+) : BaseViewModel<ViewIntent, ViewState, SingleEvent, PartialStateChange>(ViewState.initial()) {
+
+    init {
+        viewModelScope.launch {
+            val phone = getTokenUseCase.invoke().getOrNull()
+            processIntent(ViewIntent.PhoneNumberSuccess(phone))
+        }
+    }
+
+    val tokenEvent = tokenObservableUseCase.invoke()
+        .map { it.toOption() }
+        .distinctUntilChanged()
+        .filter { it.isEmpty() }
+        .map {}
 
     override fun Flow<PartialStateChange>.sendSingleEvent(): Flow<PartialStateChange> {
         return onEach { change ->
             val event = when (change) {
                 is PartialStateChange.Otp.OtpSuccess -> SingleEvent.OtpSuccess
                 is PartialStateChange.Otp.OtpFailure -> SingleEvent.OtpFailure(change.throwable)
-                PartialStateChange.Otp.OtpChangeNumber -> SingleEvent.OtpResend
-                PartialStateChange.Otp.OtpResend -> SingleEvent.OtpChangeNumber
-                PartialStateChange.Otp.OtpBack -> SingleEvent.OtpBack
+                is PartialStateChange.Otp.OnCodeSent -> SingleEvent.OtpStartCountdown
                 else -> return@onEach
             }
             eventChannel.send(event)
@@ -65,33 +97,66 @@ class OtpViewModel :
                 started = SharingStarted.WhileSubscribed()
             )
 
-        val otpChanges = filterIsInstance<ViewIntent.Submit>()
-            .withLatestFrom(otpFormFlow) { _, otpForm -> otpForm }
-            .mapNotNull { it.rightOrNull() }
-            .flatMapFirst { otp ->
+        val otpEventFlow = merge(
+            filterIsInstance<ViewIntent.Submit>()
+                .withLatestFrom(otpFormFlow) { _, otpForm -> otpForm }
+                .mapNotNull { it.rightOrNull() }
+                .flatMapFirst { otp ->
+                    flow {
+                        signInWithPhoneAuthCredentialUseCase.invoke(
+                            PhoneAuthProvider.getCredential(viewState.value.verificationId ?: "",
+                                otp)
+                        ).fold({ err ->
+                            emit(PartialStateChange.Otp.OtpFailure(err))
+                        }, {
+                            userLoginUseCase.invoke().fold({ e ->
+                                emit(PartialStateChange.Otp.OtpFailure(e))
+                            }, {
+                                emit(PartialStateChange.Otp.OtpSuccess)
+                            })
+                        })
+                    }.onStart { PartialStateChange.Otp.Loading }
+                },
+            filterIsInstance<ViewIntent.ChangeNumber>().map {
+                clearAuthUseCase.invoke().fold({
+                    PartialStateChange.Otp.OtpFailure(it)
+                }, {
+                    PartialStateChange.Otp.OtpClearAuth
+                })
+            },
+            filterIsInstance<ViewIntent.OtpBack>().map {
+                clearAuthUseCase.invoke().fold({
+                    PartialStateChange.Otp.OtpFailure(it)
+                }, {
+                    PartialStateChange.Otp.OtpClearAuth
+                })
+            })
+
+        val phoneFlow = merge(
+            filterIsInstance<ViewIntent.PhoneNumberSuccess>().map {
+                PartialStateChange.Otp.PhoneNumberSuccess(it.phone)
+            },
+            filterIsInstance<ViewIntent.VerifyPhoneNumber>().flatMapFirst {
                 flow {
-                    Timber.d("loginChanges=$otp-user.password")
-                    emit(PartialStateChange.Otp.OtpSuccess as PartialStateChange.Otp)
-                    // loginUseCase.invoke(otp).fold(
-                    //     ifRight = { emit(PartialStateChange.Otp.OtpSuccess) },
-                    //     ifLeft = { emit(PartialStateChange.Otp.OtpFailure(it)) }
-                    // )
-                }.onStart {
-                    emit(PartialStateChange.Otp.Loading)
-                }
+                    verifyPhoneNumberUseCase.invoke(it.activity)
+                        .fold({ err ->
+                            emit(PartialStateChange.Otp.OtpFailure(err))
+                        }, { phoneAuthData ->
+                            when (val phoneAuth = phoneAuthMapper.map(phoneAuthData)) {
+                                is PhoneAuth.CodeSent -> {
+                                    emit(PartialStateChange.Otp.OnCodeSent(phoneAuth.verificationId,
+                                        phoneAuth.token))
+                                }
+                                is PhoneAuth.VerificationCompleted -> {
+                                    emit(PartialStateChange.Otp.OnVerificationCompleted(
+                                        phoneAuth.credential))
+                                    emit(PartialStateChange.Otp.OtpSuccess)
+                                }
+                            }
+                        })
+                }.onStart { emit(PartialStateChange.Otp.Loading) }
             }
-
-        val otpResend = filterIsInstance<ViewIntent.Resend>().map {
-            PartialStateChange.Otp.OtpResend
-        }
-
-        val otpChangeNumber = filterIsInstance<ViewIntent.ChangeNumber>().map {
-            PartialStateChange.Otp.OtpChangeNumber
-        }
-
-        val otpBack = filterIsInstance<ViewIntent.OtpBack>().map {
-            PartialStateChange.Otp.OtpBack
-        }
+        )
 
         val firstChanges = filterIsInstance<ViewIntent.OtpChangedFirstTime>()
             .map { PartialStateChange.FirstChange.OtpChangedFirstTime }
@@ -106,12 +171,10 @@ class OtpViewModel :
                 .map {
                     PartialStateChange.ErrorsChanged(it.leftOrNull() ?: emptySet())
                 },
-            otpChanges,
-            otpResend,
-            otpChangeNumber,
-            otpBack,
+            otpEventFlow,
             firstChanges,
-            formValuesChanges
+            formValuesChanges,
+            phoneFlow
         )
     }
 }

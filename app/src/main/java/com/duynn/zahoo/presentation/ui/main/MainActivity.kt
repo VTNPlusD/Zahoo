@@ -9,6 +9,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import com.duynn.zahoo.R
 import com.duynn.zahoo.databinding.ActivityMainBinding
 import com.duynn.zahoo.presentation.ui.auth.AuthActivity
+import com.duynn.zahoo.utils.dialog.dismissAlertDialog
 import com.duynn.zahoo.utils.extension.*
 import kotlinx.coroutines.flow.StateFlow
 import org.koin.androidx.viewmodel.ext.android.viewModel

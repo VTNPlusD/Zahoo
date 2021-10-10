@@ -7,6 +7,9 @@ import com.duynn.zahoo.data.repository.source.local.UserLocalDataSourceImpl
 import com.duynn.zahoo.data.repository.source.local.api.SharedPrefApi
 import com.duynn.zahoo.data.repository.source.local.api.pref.SharedPrefApiImpl
 import com.duynn.zahoo.data.repository.source.remote.UserRemoteDataSourceImpl
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.core.component.KoinApiExtension
 import org.koin.dsl.module
@@ -30,6 +33,8 @@ val dataSourceModule = module {
     single<SharedPrefApi> {
         SharedPrefApiImpl(context = get(), moshi = get())
     }
+    single { Firebase.auth }
+    single { Firebase.database }
     //    single { appDatabase(context = get()) }
     //    single<DatabaseApi> {
     //        DatabaseApiImpl(databaseManager = get())
@@ -41,7 +46,6 @@ val dataSourceModule = module {
     single<UserDataSource.Local> {
         UserLocalDataSourceImpl(
 //            databaseApi = get(),
-            userLocalJsonAdapter = get(),
             sharedPrefApi = get(),
             application = get(),
             moshi = get()
@@ -50,7 +54,9 @@ val dataSourceModule = module {
     single<UserDataSource.Remote> {
         UserRemoteDataSourceImpl(
             apiService = get(),
-            application = get()
+            application = get(),
+            firebaseAuth = get(),
+            firebaseDatabase = get()
         )
     }
 }

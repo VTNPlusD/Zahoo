@@ -10,13 +10,15 @@ class UserMapper : BaseMapper<UserData, User>() {
     override fun map(data: UserData): User {
         return data.run {
             User(
-                userName = userName,
-                email = email,
-                roleId = roleId,
-                imagePath = imagePath,
                 id = id,
-                phone = phone,
-                date = date
+                name = name,
+                status = status,
+                image = image,
+                online = online,
+                nameInPhone = nameInPhone,
+                typing = typing,
+                selected = selected,
+                inviteAble = inviteAble
             )
         }
     }

@@ -8,6 +8,7 @@ plugins {
     id(Plugins.kotlinParcelize)
     id(Plugins.detekt).version(Versions.detekt)
     id(Plugins.googleServices)
+    id(Plugins.firebaseCrashlytics)
 }
 
 buildscript {
@@ -35,6 +36,7 @@ android {
         consumerProguardFiles(
             file("proguard-rules.pro")
         )
+        resValue("string", "admob_app_id", "ca-app-pub-2250523299023326~7343713608")
     }
 
     flavorDimensions("appVariant")
@@ -133,7 +135,16 @@ dependencies {
     androidTestImplementation(Deps.espresso_core)
 
     // Firebase
+    implementation(Deps.firebase_database)
+    implementation(Deps.firebase_storage)
+    implementation(Deps.firebase_auth)
+    implementation(Deps.firebase_messaging)
     implementation(Deps.firebase_analytics)
+    implementation(Deps.firebase_crashlytics)
+
+    // play service
+    implementation(Deps.play_services_places)
+    implementation(Deps.play_services_ads)
 
     // Timber
     implementation(Deps.timber)
@@ -141,6 +152,7 @@ dependencies {
     //Coroutine
     implementation(Deps.coroutines_core)
     implementation(Deps.coroutines_android)
+    implementation(Deps.coroutines_play_services)
     implementation(Deps.support_core_ktx)
     testImplementation(Deps.coroutines_test)
 
@@ -192,14 +204,15 @@ dependencies {
     implementation(Deps.preference)
     implementation(Deps.legacy_preference)
 
-    /*
     // more
-    implementation(Deps.support_annotations)
-    implementation(Deps.support_recyclerview)
-    implementation(Deps.support_cardview)
     implementation(Deps.swiperefreshlayout)
-    implementation(Deps.dexter) //Permissionx
+    implementation(Deps.support_recyclerview)
 
+
+    /*
+    implementation(Deps.support_annotations)
+    implementation(Deps.support_cardview)
+    implementation(Deps.dexter) //Permissionx
     // gilde
     implementation(Deps.glide_runtime)
     kapt(Deps.glide_compiler)

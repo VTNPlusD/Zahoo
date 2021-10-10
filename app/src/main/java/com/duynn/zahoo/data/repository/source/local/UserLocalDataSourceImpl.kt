@@ -3,16 +3,15 @@ package com.duynn.zahoo.data.repository.source.local
 import android.app.Application
 import com.duynn.zahoo.data.model.CountryData
 import com.duynn.zahoo.data.model.UserData
-import com.duynn.zahoo.data.model.UserDataJsonAdapter
 import com.duynn.zahoo.data.repository.source.UserDataSource
 import com.duynn.zahoo.data.repository.source.local.api.SharedPrefApi
+import com.duynn.zahoo.data.repository.source.local.api.pref.SharedPrefKey.KEY_COUNTRIES
 import com.duynn.zahoo.data.repository.source.local.api.pref.SharedPrefKey.KEY_TOKEN
 import com.duynn.zahoo.data.repository.source.local.api.pref.SharedPrefKey.KEY_USER
 import com.duynn.zahoo.domain.scheduler.AppDispatchers.IO
 import com.duynn.zahoo.domain.scheduler.DispatchersProvider
 import com.duynn.zahoo.utils.extension.getCountriesFromAssets
 import com.duynn.zahoo.utils.extension.mapNotNull
-import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import kotlinx.coroutines.Dispatchers
@@ -33,8 +32,7 @@ import timber.log.Timber
 @KoinApiExtension
 @ExperimentalCoroutinesApi
 class UserLocalDataSourceImpl(
-    sharedPrefApi: SharedPrefApi,
-    private val userLocalJsonAdapter: UserDataJsonAdapter,
+    private val sharedPrefApi: SharedPrefApi,
     private val moshi: Moshi,
     private val application: Application
 ) : UserDataSource.Local, KoinComponent {
@@ -44,7 +42,7 @@ class UserLocalDataSourceImpl(
 
     private var userObservable = sharedPrefApi.observeString(KEY_USER)
         .flowOn(dispatchersProvider.dispatcher())
-        .map { json -> json.mapNotNull { it.toUserData() } }
+        .map { json -> json.mapNotNull { it.toData<UserData>() } }
         .buffer(1)
         .also { Timber.i("User $it") }
 
@@ -61,10 +59,10 @@ class UserLocalDataSourceImpl(
     override suspend fun token() = withContext(dispatchersProvider.dispatcher()) { token }
 
     override suspend fun user() =
-        withContext(dispatchersProvider.dispatcher()) { userLocal.toUserData() }
+        withContext(dispatchersProvider.dispatcher()) { userLocal.toData<UserData>() }
 
     override suspend fun saveUser(user: UserData) = withContext(dispatchersProvider.dispatcher()) {
-        this@UserLocalDataSourceImpl.userLocal = userLocalJsonAdapter.toJson(user)
+        this@UserLocalDataSourceImpl.userLocal = user.toJson()
     }
 
     override fun userObservable() = userObservable
@@ -77,19 +75,43 @@ class UserLocalDataSourceImpl(
 
     override suspend fun getCountries() =
         withContext(dispatchersProvider.dispatcher()) {
-            application.getCountriesFromAssets().toCountriesData()
+            val exist = sharedPrefApi.getList(KEY_COUNTRIES, CountryData::class.java)
+            return@withContext if (exist.isNullOrEmpty()) {
+                val newData =
+                    application.getCountriesFromAssets().toListData<CountryData>()
+                sharedPrefApi.putList(KEY_COUNTRIES, CountryData::class.java, newData)
+                newData
+            } else exist
         }
 
-    private fun String?.toUserData(): UserData? =
-        runCatching { userLocalJsonAdapter.fromJson(this ?: return null) }.getOrNull()
-
-    private fun String?.toCountriesData(): List<CountryData> {
-        val type = Types.newParameterizedType(
-            MutableList::class.java,
-            CountryData::class.java
-        )
-        val jsonAdapter: JsonAdapter<List<CountryData>> = moshi.adapter(type)
-        return runCatching { jsonAdapter.fromJson(this ?: return emptyList()) }.getOrNull()
-            ?: emptyList()
+    private inline fun <reified T> String?.toListData(): List<T> {
+        return moshi.adapter<List<T>>(
+            Types.newParameterizedType(
+                MutableList::class.java,
+                T::class.java
+            )
+        ).let {
+            runCatching { it.fromJson(this ?: return emptyList()) }.getOrNull()
+                ?: emptyList()
+        }
     }
+
+    private inline fun <reified T> List<T>?.toJson(): String {
+        return moshi.adapter<List<T>>(
+            Types.newParameterizedType(
+                MutableList::class.java,
+                T::class.java
+            )
+        ).toJson(this)
+    }
+
+    private inline fun <reified T> String?.toData(): T? {
+        return moshi.adapter(T::class.java).let {
+            runCatching {
+                it.fromJson(this ?: return null)
+            }.getOrNull()
+        }
+    }
+
+    private inline fun <reified T> T?.toJson(): String? = moshi.adapter(T::class.java).toJson(this)
 }
