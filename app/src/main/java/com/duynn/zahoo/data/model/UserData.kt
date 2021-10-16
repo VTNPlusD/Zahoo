@@ -1,27 +1,39 @@
 package com.duynn.zahoo.data.model
 
+import android.os.Parcelable
+import androidx.annotation.NonNull
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
 import com.squareup.moshi.Json
+import kotlinx.parcelize.Parcelize
 
 /**
  *Created by duynn100198 on 10/04/21.
  */
+@Parcelize
+@Entity(tableName = "users")
 data class UserData(
+    @NonNull
+    @PrimaryKey
     @Json(name = "id")
-    val id: String? = "",
+    var id: String = "",
     @Json(name = "name")
-    val name: String? = "",
+    var name: String? = "",
     @Json(name = "status")
-    val status: String? = "",
+    var status: String? = "",
     @Json(name = "image")
-    val image: String? = "",
+    var image: String? = "",
     @Json(name = "nameInPhone")
     var nameInPhone: String = "",
+    @Ignore
     @Json(name = "selected")
-    val selected: Boolean = false,
+    var selected: Boolean = false,
     @Json(name = "online")
-    val online: Boolean = false,
+    var online: Boolean = false,
     @Json(name = "typing")
-    val typing: Boolean = false,
+    var typing: Boolean = false,
+    @Ignore
     @Json(name = "inviteAble")
-    val inviteAble: Boolean = false
-) : BaseData()
+    var inviteAble: Boolean = false
+) : BaseData(), Parcelable

@@ -117,4 +117,73 @@ class SharedPrefApiImpl(private val context: Context, private val moshi: Moshi) 
     override fun clear() {
         sharedPreferences.edit().clear().apply()
     }
+
+    override fun <T> jsonFromList(list: List<T>?, clazz: Class<T>): String {
+        return moshi.adapter<List<T>>(
+            Types.newParameterizedType(
+                MutableList::class.java,
+                clazz
+            )
+        ).toJson(list)
+    }
+
+    override fun <T> jsonFormObject(data: T?, clazz: Class<T>): String {
+        return moshi.adapter(clazz).toJson(data)
+    }
+
+    override fun <T> objectFromJson(value: String?, clazz: Class<T>): T? {
+        return moshi.adapter(clazz).let {
+            runCatching {
+                it.fromJson(value ?: "")
+            }.getOrNull()
+        }
+    }
+
+    override fun <T> listFromJson(value: String?, clazz: Class<T>): List<T>? {
+        return moshi.adapter<List<T>>(
+            Types.newParameterizedType(MutableList::class.java, clazz)
+        ).let {
+            runCatching { it.fromJson(value ?: "") }.getOrNull()
+        }
+    }
+
+    override fun <K, V> hashMapFromJson(
+        value: String?,
+        clazzKey: Class<K>,
+        clazzValue: Class<V>
+    ): Map<K, V>? {
+        return moshi.adapter<Map<K, V>>(
+            Types.newParameterizedType(Map::class.java, clazzKey, clazzValue)
+        ).let {
+            runCatching { it.fromJson(value ?: "") }.getOrNull()
+        }
+    }
+
+    override fun <K, V> jsonFromHashMap(
+        list: Map<K, V>?,
+        clazzKey: Class<K>,
+        clazzValue: Class<V>
+    ): String {
+        return moshi.adapter<Map<K, V>>(
+            Types.newParameterizedType(
+                Map::class.java,
+                clazzKey,
+                clazzValue
+            )
+        ).toJson(list)
+    }
+
+    override fun <T> hashSetFromJson(value: String?, clazz: Class<T>): Set<T>? {
+        return moshi.adapter<HashSet<T>>(
+            Types.newParameterizedType(HashSet::class.java, clazz)
+        ).let {
+            runCatching { it.fromJson(value ?: "") }.getOrNull()
+        }
+    }
+
+    override fun <T> jsonFromHashSet(list: Set<T>?, clazz: Class<T>): String {
+        return moshi.adapter<Set<T>>(
+            Types.newParameterizedType(Set::class.java, clazz)
+        ).toJson(list)
+    }
 }

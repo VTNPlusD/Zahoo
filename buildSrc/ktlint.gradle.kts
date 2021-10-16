@@ -25,7 +25,7 @@ val ktlintFormat by tasks.creating(JavaExec::class) {
     description = "Fix Kotlin code style deviations."
     classpath = configurations.getByName("ktlint")
     main = "com.pinterest.ktlint.Main"
-    args = listOf("-F", "**/*.kt")
+    args = listOf("-F", "src/**/*.kt")
 }
 
 dependencies {

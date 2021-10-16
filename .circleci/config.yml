@@ -24,8 +24,7 @@ build_test: &build_test
     - run:
         name: Export environment variables
         command: >-
-          echo 'export GOOGLE_SERVICES_DEV="$GOOGLE_SERVICES_DEV"' >> $BASH_ENV
-          | echo 'export GOOGLE_SERVICES_PRD="$GOOGLE_SERVICES_PRD"' >>
+          echo 'export GOOGLE_SERVICES_PRD="$GOOGLE_SERVICES_PRD"' >>
           $BASH_ENV | echo 'export KEYSTORES="$KEYSTORES"' >> $BASH_ENV
     - run:
         name: Create new folders
@@ -33,9 +32,8 @@ build_test: &build_test
     - run:
         name: Decode Bas64 to file
         command: >-
-          echo $GOOGLE_SERVICES_DEV | base64 -di >
-          app/src/dev/google-services.json | echo $GOOGLE_SERVICES_PRD | base64
-          -di > app/src/prd/google-services.json | echo $KEYSTORES | base64 -di
+          echo $GOOGLE_SERVICES_PRD | base64
+          -di > app/google-services.json | echo $KEYSTORES | base64 -di
           > keystores/android-keystores
     - restore_cache:
         <<: *cache_key
@@ -73,7 +71,7 @@ deploy_develop: &deploy_develop
         name: Decode Bas64 to file
         command: >-
           echo $GOOGLE_SERVICES_DEV | base64 -di >
-          app/src/dev/google-services.json  | echo $KEYSTORES | base64 -di >
+          app/google-services.json  | echo $KEYSTORES | base64 -di >
           keystores/android-keystores
     - restore_cache:
         <<: *cache_key
@@ -108,7 +106,7 @@ deploy_production: &deploy_production
         name: Decode Bas64 to file
         command: >-
           echo $GOOGLE_SERVICES_PRD | base64 -di >
-          app/src/prd/google-services.json  | echo $KEYSTORES | base64 -di >
+          app/google-services.json  | echo $KEYSTORES | base64 -di >
           keystores/android-keystores
     - restore_cache:
         <<: *cache_key

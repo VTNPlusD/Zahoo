@@ -1,5 +1,31 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+val configFilePath = "./src/main/assets/config.json"
+val configFileEmptyMessage =
+    "You are building Sinch Android Reference Sample Application project that requires presence of a configuration file with your auhthorization data.\n" +
+        "Create and place your config.json file inside the " +
+        "assets folder (app/src/main/assets) and re-build the application\n" +
+        "Example of config.json:\n" +
+        "[{\n" +
+        "  \"name\": \"<ENVIRONMENT NAME\",\n" +
+        "  \"appKey\": \"<YOUR SINCH APP KEY>\",\n" +
+        "  \"appSecret\": \"<YOUR SINCH APP SECRET>\",\n" +
+        "  \"environment\": \"ocra.api.sinch.com\"\n" +
+        "}]\n" +
+        "Check the \"Create configuration file\" section of the Readme file for more details regarding its content and structure."
+
+val requiredConfigFileParamsMissingMessage =
+    "You are building Sinch Android Reference Sample Application project that requires your application specific authorization data (key and secret).\n" +
+        "Check config.json file located in app/src/main/assets folder and fill it with these values copied from Sinch portal website of your application.\n" +
+        "Check the \"Create configuration file\" section of the Readme for more details regarding content and structure of the config.json file."
+
+val googleServicesJsonFilePath = "google-services.json"
+val googleServicesJsonMissingMessage =
+    "You are building Sinch Android Reference Sample Application project that uses Firebase Cloud Messaging for delivering push notifications.\n" +
+        "In order for push notification to work you must generate and include your application specific (with correspondent \"package_name\") google-services.json file.\n" +
+        "Follow the Firebase Cloud Messaging manual here https://firebase.google.com/docs/android/setup to get one.\n" +
+        "For more information regarding Sinch Managed Push Notifications refer to https://developers.sinch.com/docs/voice-android-cloud-push-notifications#2-provision-the-application-with-the-support-code"
+
 plugins {
     id(Plugins.androidApp)
     kotlin(Plugins.kotlinAndroid)
@@ -16,10 +42,33 @@ buildscript {
     apply(from = "../buildSrc/ktlint.gradle.kts")
 }
 
+task("runMakeSyncIfNeeded") {
+    val libs = fileTree("libs").filter { it.isFile }.files.map { it.name }
+    val isRTCSDKAlreadySynced = libs.find { it.contains("sinch-android-rtc") }
+    isRTCSDKAlreadySynced?.let {
+        finalizedBy("runMakeSync")
+    } ?: run {
+        println("Sync skipped. VVC SDK already present.")
+    }
+}
+
+task<Exec>("runMakeSync") {
+    workingDir("..")
+    commandLine("make", "sync")
+}
+
 tasks {
+    getByPath(":app:preBuild").dependsOn("ktlintFormat")
     getByPath(":app:preBuild").dependsOn("ktlintCheck")
     getByPath(":app:preBuild").dependsOn("detekt")
-    // getByPath(":app:preBuild").dependsOn("ktlintFormat")
+    getByPath(":app:preBuild").dependsOn("runMakeSyncIfNeeded")
+    getByPath(":app:preBuild").doFirst {
+        if (!file("./$googleServicesJsonFilePath").exists()) {
+            ant.withGroovyBuilder {
+                "echo"("level" to "error", "message" to googleServicesJsonMissingMessage)
+            }
+        }
+    }
 }
 
 android {
@@ -119,6 +168,7 @@ android {
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
     implementation(Deps.kotlin_stdlib)
     implementation(Deps.support_core_ktx)
     implementation(Deps.support_app_compat)

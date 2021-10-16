@@ -11,7 +11,7 @@ class NoExclExclRule : Rule("no-excl-excl") {
         emit: (offset: Int, errorMessage: String, canBeAutoCorrected: Boolean) -> Unit
     ) {
         if (node.elementType == EXCLEXCL) {
-            emit(node.startOffset, "Not used !! ", false)
+            // emit(node.startOffset, "Not used !! ", false)
         }
     }
 }

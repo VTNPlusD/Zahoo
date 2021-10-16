@@ -65,7 +65,7 @@ class LoginFragment :
             is SingleEvent.InitCountries -> {
                 viewBinding.countryCodeSpinner.adapter = ArrayAdapter(
                     requireContext(),
-                    R.layout.item_country_spinner,
+                    R.layout.country_spinner_item,
                     event.countries
                 )
                 viewBinding.countryCodeSpinner.setSelection(viewModel.viewState.value.countries.indexOf(

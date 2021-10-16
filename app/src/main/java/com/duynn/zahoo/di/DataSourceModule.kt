@@ -2,21 +2,28 @@ package com.duynn.zahoo.di
 
 import android.content.ContentResolver
 import android.content.Context
+import androidx.room.Room
 import com.duynn.zahoo.data.repository.source.UserDataSource
 import com.duynn.zahoo.data.repository.source.local.UserLocalDataSourceImpl
+import com.duynn.zahoo.data.repository.source.local.api.DatabaseApi
+import com.duynn.zahoo.data.repository.source.local.api.DatabaseConfig
 import com.duynn.zahoo.data.repository.source.local.api.SharedPrefApi
+import com.duynn.zahoo.data.repository.source.local.api.db.DatabaseApiImpl
+import com.duynn.zahoo.data.repository.source.local.api.db.DatabaseManager
+import com.duynn.zahoo.data.repository.source.local.api.db.MigrationManager
 import com.duynn.zahoo.data.repository.source.local.api.pref.SharedPrefApiImpl
 import com.duynn.zahoo.data.repository.source.remote.UserRemoteDataSourceImpl
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.core.component.KoinApiExtension
 import org.koin.dsl.module
 
-// private fun appDatabase(context: Context): DatabaseManager =
-//    Room.databaseBuilder(context, DatabaseManager::class.java, DatabaseConfig.DATABASE_NAME)
-//        .addMigrations(MigrationManager.MIGRATION_1_2).build()
+private fun appDatabase(context: Context): DatabaseManager =
+    Room.databaseBuilder(context, DatabaseManager::class.java, DatabaseConfig.DATABASE_NAME)
+        .addMigrations(MigrationManager.MIGRATION_1_2).build()
 
 private fun contentResolver(context: Context): ContentResolver = context.contentResolver
 
@@ -35,20 +42,20 @@ val dataSourceModule = module {
     }
     single { Firebase.auth }
     single { Firebase.database }
-    //    single { appDatabase(context = get()) }
-    //    single<DatabaseApi> {
-    //        DatabaseApiImpl(databaseManager = get())
-    //    }
+    single { Firebase.storage }
+    single { appDatabase(context = get()) }
+    single<DatabaseApi> {
+        DatabaseApiImpl(databaseManager = get())
+    }
     /**
      * Data source module
      */
 
     single<UserDataSource.Local> {
         UserLocalDataSourceImpl(
-//            databaseApi = get(),
+            databaseApi = get(),
             sharedPrefApi = get(),
-            application = get(),
-            moshi = get()
+            application = get()
         )
     }
     single<UserDataSource.Remote> {

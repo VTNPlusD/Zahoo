@@ -20,6 +20,8 @@ interface UserRepository {
 
     suspend fun getCountries(): DomainResult<List<CountryData>>
     fun userObservable(): Flow<DomainResult<Option<UserData>>>
+    fun getAllUsers(): Flow<DomainResult<List<UserData>>>
+    suspend fun saveAllUser(users: List<UserData>): DomainResult<Unit>
     suspend fun checkAuth(): DomainResult<Boolean>
     suspend fun checkAuthInternal()
     suspend fun verifyPhoneNumber(activity: Activity): DomainResult<PhoneAuthData>

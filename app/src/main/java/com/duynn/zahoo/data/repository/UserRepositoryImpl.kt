@@ -94,22 +94,16 @@ class UserRepositoryImpl(
         return catch {
             withContext(dispatchersProvider.dispatcher()) {
                 userLocalSource.token()?.let {
-                    val dataSnapshot = userRemoteSource.login(it)
+                    val dataSnapshot = userRemoteSource.getUser(it)
                     val newUser = UserData(it, it, appName, "")
                     if (dataSnapshot.exists() && dataSnapshot.childrenCount > 0) {
-                        val user: UserData? = dataSnapshot.getValue(UserData::class.java)
-                        try {
-                            if (user?.id != null && user.name != null && user.status != null) {
-                                user.nameInPhone = "You"
-                                userLocalSource.saveUser(user)
-                            } else userRemoteSource.createUser(newUser)
-                        } catch (ex: Exception) {
-                            userRemoteSource.createUser(newUser)
-                        }
+                        val user = dataSnapshot.getValue(UserData::class.java)
+                        if (user?.id != null && user.name != null && user.status != null) {
+                            user.nameInPhone = "You"
+                            userLocalSource.saveUser(user)
+                        } else userRemoteSource.createUser(newUser)
                     } else userRemoteSource.createUser(newUser)
-                } ?: kotlin.run {
-                    userLocalSource.removeUserAndToken()
-                }
+                } ?: userLocalSource.removeUserAndToken()
             }
         }.mapLeft(mapper::map)
     }
@@ -119,6 +113,20 @@ class UserRepositoryImpl(
     }
 
     override fun userObservable() = userObservable
+
+    override fun getAllUsers(): Flow<DomainResult<List<UserData>>> {
+        return userLocalSource.getAllUser().map {
+            it.rightResult()
+        }.catchError(mapper)
+            .distinctUntilChanged()
+            .buffer(1)
+    }
+
+    override suspend fun saveAllUser(users: List<UserData>): DomainResult<Unit> {
+        return catch {
+            userLocalSource.saveAllUser(users)
+        }.mapLeft(mapper::map)
+    }
 
     override suspend fun checkAuth(): DomainResult<Boolean> {
         return catch {

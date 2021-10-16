@@ -25,4 +25,12 @@ interface SharedPrefApi {
     fun <T> getList(key: String, clazz: Class<T>): List<T>?
     fun removeKey(key: String)
     fun clear()
+    fun <T> jsonFromList(list: List<T>?, clazz: Class<T>): String
+    fun <T> jsonFormObject(data: T?, clazz: Class<T>): String
+    fun <T> objectFromJson(value: String?, clazz: Class<T>): T?
+    fun <T> listFromJson(value: String?, clazz: Class<T>): List<T>?
+    fun <K, V> hashMapFromJson(value: String?, clazzKey: Class<K>, clazzValue: Class<V>): Map<K, V>?
+    fun <K, V> jsonFromHashMap(list: Map<K, V>?, clazzKey: Class<K>, clazzValue: Class<V>): String
+    fun <T> hashSetFromJson(value: String?, clazz: Class<T>): Set<T>?
+    fun <T> jsonFromHashSet(list: Set<T>?, clazz: Class<T>): String
 }

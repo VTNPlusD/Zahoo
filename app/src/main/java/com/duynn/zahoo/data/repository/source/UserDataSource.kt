@@ -23,12 +23,14 @@ interface UserDataSource {
         fun userObservable(): Flow<Option<UserData>>
         suspend fun removeUserAndToken()
         suspend fun getCountries(): List<CountryData>
+        fun getAllUser(): Flow<List<UserData>>
+        suspend fun saveAllUser(users: List<UserData>)
     }
 
     interface Remote {
-        suspend fun login(phoneNumber: String): DataSnapshot
+        suspend fun getUser(phoneNumber: String): DataSnapshot
         suspend fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential): Unit?
         suspend fun verifyPhoneNumber(token: String, activity: Activity): PhoneAuthData
-        suspend fun createUser(userData: UserData): Unit?
+        suspend fun createUser(userData: UserData)
     }
 }

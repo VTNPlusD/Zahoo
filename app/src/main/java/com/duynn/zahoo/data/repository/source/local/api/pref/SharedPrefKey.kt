@@ -8,5 +8,4 @@ object SharedPrefKey {
     const val KEY_TOKEN = "KEY_TOKEN"
     const val KEY_USER = "KEY_USER"
     const val KEY_COUNTRIES = "KEY_COUNTRIES"
-    const val KEY_PHONE_NUMBER = "KEY_PHONE_NUMBER"
 }
