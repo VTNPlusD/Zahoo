@@ -67,8 +67,11 @@ class OtpFragment :
     }
 
     private fun bindVM() {
-        viewModel.tokenEvent.observe(this) {
+        viewModel.eventGoBack.observe(this) {
             findNavController().popBackStack()
+        }
+        viewModel.token.observe(this) {
+            viewBinding.infoText.text = String.format(getString(R.string.otp_sent), it)
         }
     }
 
@@ -111,9 +114,6 @@ class OtpFragment :
         if (viewState.otpChanged && errorText.text != otpErrorMessage) {
             errorText.text = otpErrorMessage
         }
-
-        infoText.text = String.format(getString(R.string.otp_sent), viewState.phone)
-
         TransitionManager.beginDelayedTransition(
             root,
             AutoTransition()

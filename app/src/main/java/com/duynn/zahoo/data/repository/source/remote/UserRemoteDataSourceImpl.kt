@@ -2,8 +2,6 @@ package com.duynn.zahoo.data.repository.source.remote
 
 import android.app.Activity
 import android.app.Application
-import android.net.Uri
-import android.provider.OpenableColumns
 import com.duynn.zahoo.data.model.PhoneAuthData
 import com.duynn.zahoo.data.model.UserData
 import com.duynn.zahoo.data.repository.source.UserDataSource
@@ -23,16 +21,11 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.withContext
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.qualifier.named
 import timber.log.Timber
-import java.io.ByteArrayOutputStream
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -52,7 +45,7 @@ class UserRemoteDataSourceImpl(
     private val newUserRef = firebaseDatabase.getReference(REF_NEW_USER)
 
     @ExperimentalCoroutinesApi
-    override suspend fun login(phoneNumber: String): DataSnapshot =
+    override suspend fun getUser(phoneNumber: String): DataSnapshot =
         suspendCancellableCoroutine {
             userRef.child(phoneNumber).addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -69,12 +62,8 @@ class UserRemoteDataSourceImpl(
         suspendCancellableCoroutine { continuation ->
             firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        continuation.resume(Unit)
-                    } else task.exception?.let {
-                        continuation.resumeWithException(it)
-                    }
-                        ?: kotlin.run { continuation.resumeWithException(Throwable("Some thing error!")) }
+                    if (task.isSuccessful) continuation.resume(Unit)
+                    else continuation.resumeWithException(task.exception!!)
                 }
         }
 
@@ -111,7 +100,7 @@ class UserRemoteDataSourceImpl(
 
     override suspend fun createUser(userData: UserData) =
         suspendCancellableCoroutine<Unit> { continuation ->
-            userRef.child(userData.id ?: "").setValue(userData)
+            userRef.child(userData.id).setValue(userData)
                 .addOnSuccessListener {
                     newUserRef.setValue(userData)
                     continuation.resume(Unit)
@@ -120,27 +109,4 @@ class UserRemoteDataSourceImpl(
                     continuation.resumeWithException(it)
                 }
         }
-
-    private suspend fun uploadAvatar(image: Uri?): String? {
-        return withContext(dispatchersProvider.dispatcher()) {
-            image?.let {
-                val contentResolver = application.contentResolver
-                val type = contentResolver.getType(image)
-                val inputStream = contentResolver.openInputStream(image)
-                val fileName = contentResolver.query(image, null, null, null, null)?.use {
-                    it.moveToFirst()
-                    it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME))
-                }
-                val bytes = ByteArrayOutputStream().use {
-                    inputStream?.copyTo(it)
-                    it.toByteArray()
-                }
-                val requestFile = bytes.toRequestBody(type?.toMediaTypeOrNull())
-                val body = MultipartBody.Part.createFormData("image", fileName, requestFile)
-                apiService.uploadImage(body).unwrap().imagePath
-            } ?: run {
-                null
-            }
-        }
-    }
 }

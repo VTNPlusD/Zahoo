@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/phoneBook"
+    app:startDestination="@id/phoneBookFragment"
+    tools:ignore="UnusedNavigation">
+
+    <fragment
+        android:id="@+id/phoneBookFragment"
+        android:name="com.duynn.zahoo.presentation.ui.main.phoneBook.PhoneBookFragment"
+        android:label="@string/phone_number"
+        tools:layout="@layout/fragment_phone_book" />
+</navigation>

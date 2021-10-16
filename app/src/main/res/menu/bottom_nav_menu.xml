@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/home"
-        android:icon="@drawable/ic_home_black_24dp"
-        android:title="Home" />
+        android:id="@+id/chat"
+        android:icon="@drawable/ic_chat_black_bold_24dp"
+        android:title="@string/chat" />
     <item
-        android:id="@+id/profile"
-        android:icon="@drawable/ic_person_black_24dp"
-        android:title="User profile" />
+        android:id="@+id/group"
+        android:icon="@drawable/ic_3_user_black_bold_24dp"
+        android:title="@string/group" />
+    <item
+        android:id="@+id/phoneBook"
+        android:icon="@drawable/ic_2_user_black_bold_24dp"
+        android:title="@string/phone_book" />
+    <item
+        android:id="@+id/setting"
+        android:icon="@drawable/ic_setting_black_bold_24dp"
+        android:title="@string/setting" />
 </menu>

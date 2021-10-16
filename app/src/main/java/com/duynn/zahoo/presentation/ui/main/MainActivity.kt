@@ -1,5 +1,7 @@
 package com.duynn.zahoo.presentation.ui.main
 
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -19,13 +21,17 @@ import timber.log.Timber
 /**
  *Created by duynn100198 on 10/04/21.
  */
-class MainActivity : AppCompatActivity() {
 
+class MainActivity : AppCompatActivity() {
     private var currentNavController: StateFlow<NavController>? = null
     private val binding by viewBinding(ActivityMainBinding::inflate)
     private val viewModel by viewModel<MainViewModel>(state = emptyState())
 
     var onSupportNavigateUp: (() -> Boolean)? = null
+
+    private val navHostFragment
+        get() =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +42,15 @@ class MainActivity : AppCompatActivity() {
             dismissAlertDialog()
         }
         bindVM()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        clearNotifications()
+    }
+
+    private fun clearNotifications() {
+        (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancelAll()
     }
 
     private fun bindVM() {
@@ -59,8 +74,10 @@ class MainActivity : AppCompatActivity() {
      */
     private fun setupBottomNavigationBar() {
         val navGraphIds = listOf(
-            R.navigation.home,
-            R.navigation.profile
+            R.navigation.chat,
+            R.navigation.group,
+            R.navigation.phone_book,
+            R.navigation.setting
         )
 
         // Setup the bottom navigation view with a list of navigation graphs
@@ -89,8 +106,7 @@ class MainActivity : AppCompatActivity() {
 
         Timber.d("[onActivityResult] { requestCode: $requestCode, resultCode: $resultCode, data: $data }")
 
-        (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment
-            ?: return)
+        (navHostFragment ?: return)
             .childFragmentManager
             .fragments
             .forEach { it.onActivityResult(requestCode, resultCode, data) }

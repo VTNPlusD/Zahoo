@@ -32,7 +32,6 @@ val viewModelModule = module {
             tokenObservableUseCase = get(),
             clearAuthUseCase = get(),
             verifyPhoneNumberUseCase = get(),
-            getTokenUseCase = get(),
             phoneAuthMapper = get(),
             signInWithPhoneAuthCredentialUseCase = get()
         )
@@ -41,6 +40,9 @@ val viewModelModule = module {
         SplashViewModel(checkAuthUseCase = get())
     }
     viewModel {
-        MainViewModel(userObservableUseCase = get())
+        MainViewModel(
+            userObservableUseCase = get(),
+            app = get()
+        )
     }
 }

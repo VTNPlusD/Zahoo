@@ -9,6 +9,9 @@ package com.duynn.zahoo.utils.constants
 object Constants {
     // App constants
     const val KEY_BASE_URL = "KEY_BASE_URL"
+
     // Format constants
     const val OKHTTP_TIMEOUT = 10L
+    const val CONFIG_ASSET_FILENAME = "config.json"
+    const val COUNTRIES_ASSET_FILENAME = "countries.json"
 }

@@ -25,7 +25,6 @@ interface OtpContract {
         val phoneAuthCredential: PhoneAuthCredential?,
         val verificationId: String?,
         val forceResendingToken: PhoneAuthProvider.ForceResendingToken?,
-        val phone: String?,
         val startCountdown: Boolean
     ) : MVIViewState {
         companion object {
@@ -38,7 +37,6 @@ interface OtpContract {
                 phoneAuthCredential = null,
                 verificationId = null,
                 forceResendingToken = null,
-                phone = null,
                 startCountdown = false
             )
         }
@@ -51,8 +49,6 @@ interface OtpContract {
         object OtpChangedFirstTime : ViewIntent()
         object OtpBack : ViewIntent()
         data class VerifyPhoneNumber(val activity: Activity) : ViewIntent()
-
-        data class PhoneNumberSuccess(val phone: String?) : ViewIntent()
     }
 
     sealed class PartialStateChange : MVIPartialStateChange<ViewState> {
@@ -66,7 +62,6 @@ interface OtpContract {
             object OtpSuccess : Otp()
             object OtpClearAuth : Otp()
             data class OtpFailure(val throwable: AppError) : Otp()
-            data class PhoneNumberSuccess(val phone: String?) : Otp()
             data class OnVerificationCompleted(val phoneAuthCredential: PhoneAuthCredential) : Otp()
             data class OnVerificationFailed(val throwable: AppError) : Otp()
             data class OnCodeSent(
@@ -80,7 +75,6 @@ interface OtpContract {
                     is OtpSuccess -> viewState.copy(isLoading = false)
                     is OtpFailure -> viewState.copy(isLoading = false, authInProgress = false)
                     OtpClearAuth -> viewState.copy(isLoading = false)
-                    is PhoneNumberSuccess -> viewState.copy(phone = phone)
                     is OnCodeSent -> viewState.copy(
                         isLoading = false,
                         authInProgress = true,

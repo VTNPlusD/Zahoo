@@ -4,7 +4,6 @@ import androidx.lifecycle.viewModelScope
 import com.duynn.zahoo.data.error.AppError
 import com.duynn.zahoo.domain.entity.PhoneAuth
 import com.duynn.zahoo.domain.usecase.ClearAuthUseCase
-import com.duynn.zahoo.domain.usecase.GetTokenUseCase
 import com.duynn.zahoo.domain.usecase.SignInWithPhoneAuthCredentialUseCase
 import com.duynn.zahoo.domain.usecase.TokenObservableUseCase
 import com.duynn.zahoo.domain.usecase.VerifyPhoneNumberUseCase
@@ -28,6 +27,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
@@ -35,7 +35,6 @@ import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
-import kotlinx.coroutines.launch
 
 /**
  * Created by duynn100198 on 10/5/21.
@@ -46,23 +45,21 @@ class OtpViewModel(
     tokenObservableUseCase: TokenObservableUseCase,
     private val clearAuthUseCase: ClearAuthUseCase,
     private val verifyPhoneNumberUseCase: VerifyPhoneNumberUseCase,
-    private val getTokenUseCase: GetTokenUseCase,
     private val signInWithPhoneAuthCredentialUseCase: SignInWithPhoneAuthCredentialUseCase,
     private val phoneAuthMapper: PhoneAuthMapper
 ) : BaseViewModel<ViewIntent, ViewState, SingleEvent, PartialStateChange>(ViewState.initial()) {
 
-    init {
-        viewModelScope.launch {
-            val phone = getTokenUseCase.invoke().getOrNull()
-            processIntent(ViewIntent.PhoneNumberSuccess(phone))
-        }
-    }
-
-    val tokenEvent = tokenObservableUseCase.invoke()
+    val eventGoBack = tokenObservableUseCase.invoke()
         .map { it.toOption() }
         .distinctUntilChanged()
         .filter { it.isEmpty() }
         .map {}
+
+    val token = tokenObservableUseCase.invoke()
+        .map { it.toOption() }
+        .distinctUntilChanged()
+        .map { it.getOrNull() }
+        .filterNotNull()
 
     override fun Flow<PartialStateChange>.sendSingleEvent(): Flow<PartialStateChange> {
         return onEach { change ->
@@ -137,9 +134,6 @@ class OtpViewModel(
             })
 
         val phoneFlow = merge(
-            filterIsInstance<ViewIntent.PhoneNumberSuccess>().map {
-                PartialStateChange.Otp.PhoneNumberSuccess(it.phone)
-            },
             filterIsInstance<ViewIntent.VerifyPhoneNumber>().flatMapFirst {
                 flow {
                     verifyPhoneNumberUseCase.invoke(it.activity)

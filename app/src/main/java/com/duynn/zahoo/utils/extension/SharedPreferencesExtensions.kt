@@ -14,7 +14,7 @@ import kotlin.reflect.KProperty
 /**
  *Created by duynn100198 on 10/04/21.
  */
-inline fun <T> SharedPreferences.delegate(
+inline fun <reified T> SharedPreferences.delegate(
     crossinline getter: SharedPreferences.(key: String, defaultValue: T) -> T,
     crossinline setter: SharedPreferences.Editor.(key: String, value: T) -> SharedPreferences.Editor,
     defaultValue: T,

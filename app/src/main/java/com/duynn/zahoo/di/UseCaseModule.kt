@@ -3,6 +3,7 @@ package com.duynn.zahoo.di
 import com.duynn.zahoo.domain.usecase.CheckAuthUseCase
 import com.duynn.zahoo.domain.usecase.ClearAuthUseCase
 import com.duynn.zahoo.domain.usecase.GetTokenUseCase
+import com.duynn.zahoo.domain.usecase.SaveAllUserUseCase
 import com.duynn.zahoo.domain.usecase.SetTokenUseCase
 import com.duynn.zahoo.domain.usecase.SignInWithPhoneAuthCredentialUseCase
 import com.duynn.zahoo.domain.usecase.TokenObservableUseCase
@@ -24,4 +25,5 @@ val useCaseModule = module {
     factory { TokenObservableUseCase(userRepository = get()) }
     factory { VerifyPhoneNumberUseCase(userRepository = get()) }
     factory { SignInWithPhoneAuthCredentialUseCase(userRepository = get()) }
+    factory { SaveAllUserUseCase(userRepository = get()) }
 }

@@ -130,4 +130,12 @@ Neque aliquam vestibulum morbi blandit. Molestie nunc non blandit massa enim nec
     <string name="you_will_receive_a_6_digit_code_for_phone_number_verification">You will receive a 6 digit code for phone number verification</string>
     <string name="enter_your_phone_number">Enter your phone number</string>
     <string name="hint_phone_number">090*********</string>
+    <string name="chat">Chat</string>
+    <string name="group">Group</string>
+    <string name="phone_book">Phone Book</string>
+    <string name="setting">Setting</string>
+    <string name="incoming_call_notification_title">Incoming call</string>
+    <string name="action_accept">Answer</string>
+    <string name="action_decline">Decline</string>
+    <string name="notification_chanel_description">Incoming Sinch Push Notifications</string>
 </resources>

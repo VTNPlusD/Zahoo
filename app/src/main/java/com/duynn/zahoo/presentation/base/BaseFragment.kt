@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
+import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.viewbinding.ViewBinding
@@ -29,6 +31,7 @@ abstract class BaseFragment<
 
     protected abstract val viewModel: VM
     protected abstract val viewBinding: ViewBinding
+    val actionBar: ActionBar? get() = (activity as? AppCompatActivity)?.supportActionBar
 
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
